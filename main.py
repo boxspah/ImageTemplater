@@ -1,4 +1,4 @@
-import Image
+from PIL import Image
 
 background = Image.open("test1.png")
 foreground = Image.open("test2.png")
