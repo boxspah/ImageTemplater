@@ -1,0 +1,9 @@
+# various system files
+.vscode
+__pycache__
+
+# don't commit images
+images/*
+templates/*
+# except the help file
+!*/about.txt

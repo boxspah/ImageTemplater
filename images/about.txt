@@ -1,0 +1,1 @@
+Place images that will be inserted into templates in this directory.
