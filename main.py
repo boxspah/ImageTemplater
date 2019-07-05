@@ -1,6 +1,7 @@
 import os
 from PIL import Image
 
+
 def mergePics(backG,foreG):
     back = Image.open(backG)
     fore = Image.open(foreG)
@@ -72,6 +73,7 @@ for im in images:
     if len(templates[platform]) > 0:
         for t in templates[platform]:
             mergePics(im.filename,t.filename)
+
     else:
         print("No appropriate templates found.")
 
