@@ -14,12 +14,15 @@ class CentreSelector():
         self.canvas = Canvas(self.window, width=self.cSize[0], height=self.cSize[1])
         self.image = self.canvas.create_image(self.cSize[0]//2, self.cSize[1]//2, anchor=CENTER, image=self.imFile)
         self.canvas.bind("<Button-1>", self.canvasCallback)
+        self.finalPoint = None
 
         self.confirm = Button(self.window, text="Confirm", command=self.confirm, state=DISABLED)
 
     def canvasCallback(self, e):
-        print('Clicked at', e.x, e.y)
-        self.confirm.config(state=NORMAL)
+        self.finalPoint = (e.x, e.y)
+        print(self.finalPoint)
+        if self.confirm['state'] is not NORMAL:
+            self.confirm.config(state=NORMAL)
     
     def confirm(self):
         print('Position confirmed.')
@@ -30,3 +33,6 @@ class CentreSelector():
         self.confirm.pack()
 
         self.window.mainloop()
+
+    def getResult(self):
+        return self.finalPoint
