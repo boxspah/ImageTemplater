@@ -1,13 +1,13 @@
 import os
 from PIL import Image
 
-def mergePics(back,fore):
-    print(back,fore)
+def mergePics(backG,foreG):
+    back = Image.open(backG)
+    fore = Image.open(foreG)
     width, height = back.size
-    # fore = fore.convert("RGBA")
-    # back = back.convert("RGBA")
     fore = fore.resize((width, height), Image.BILINEAR)
-    Image.alpha_composite(back, fore).save("out/"+imgList[0]+templateList[0]+".png")
+    save = backG[7:-4],foreG[10:-4]
+    Image.alpha_composite(back, fore).save("out/"+str(save)+".png")
 
 templates = {}
 images = []
@@ -15,17 +15,25 @@ platform_list = ['Instagram', 'Facebook', 'Twitter', 'Linkedin']
 for p in platform_list:
     templates[p] = []
 
+
+
 for im in os.listdir("images"):
-    # im = Image.open("Ba_b_do8mag_c6_big.png")
-    # bg = Image.new("RGB", im.size, (255,255,255))
-    # bg.paste(im,im)
-    # bg.save("colors.jpg")
-    # Converting jpeg to
+    try:
+        with Image.open('images/' + im) as image:
+            if os.path.splitext(im)[1] != ".png":
+                bg = Image.new('RGBA',image.size,(255,255,255))
+                bg.paste(image,(0,0))
+                tempName = os.path.splitext(im)[0]
+                print(tempName)
+                bg.save(("images/"+tempName+".png"), quality=100)
+                os.remove("images/"+im)
+    except IOError:
+        pass
+
+
 for infile in os.listdir("images"):
     try:
         with Image.open('images/' + infile) as im:
-            print(im)
-            im.convert("RGBA")
             print(im)
             print('Found image: ', infile, im.format, "%dx%d" % im.size, im.mode)
             images.append(im)
@@ -63,7 +71,7 @@ for im in images:
 
     if len(templates[platform]) > 0:
         for t in templates[platform]:
-            mergePics(im,t)
+            mergePics(im.filename,t.filename)
     else:
         print("No appropriate templates found.")
 
