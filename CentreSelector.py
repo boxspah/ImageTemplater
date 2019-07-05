@@ -15,13 +15,15 @@ class CentreSelector():
         self.image = self.canvas.create_image(self.cSize[0]//2, self.cSize[1]//2, anchor=CENTER, image=self.imFile)
         self.canvas.bind("<Button-1>", self.canvasCallback)
 
-        self.confirm = Button(self.window, text="Confirm", command=self.gotchu)
+        self.confirm = Button(self.window, text="Confirm", command=self.confirm, state=DISABLED)
 
     def canvasCallback(self, e):
         print('Clicked at', e.x, e.y)
+        self.confirm.config(state=NORMAL)
     
-    def gotchu(self):
+    def confirm(self):
         print('Position confirmed.')
+        self.window.destroy()
 
     def show(self):
         self.canvas.pack()
