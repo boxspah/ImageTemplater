@@ -4,8 +4,8 @@ from PIL import Image
 def mergePics(backG,foreG):
     back = Image.open(backG)
     fore = Image.open(foreG)
-    width, height = back.size
-    fore = fore.resize((width, height), Image.BILINEAR)
+    width, height = fore.size
+    back = back.resize((width, height), Image.BILINEAR)
     save = backG[7:-4],foreG[10:-4]
     Image.alpha_composite(back, fore).save("out/"+str(save)+".png")
 
