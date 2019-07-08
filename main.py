@@ -1,6 +1,6 @@
 import os
 from PIL import Image
-
+import cache
 
 def mergePics(backG,foreG):
     back = Image.open(backG)
@@ -48,16 +48,33 @@ for infile in os.listdir("templates"):
     try:
         with Image.open('templates/' + infile) as im:
             print('Found image: ', infile, im.format, "%dx%d" % im.size, im.mode)
-            if("instagram" in infile.lower()):
-                templates['Instagram'].append(im)
-            elif("facebook" in infile.lower()):
-                templates['Facebook'].append(im)
-            elif("linkedin" in infile):
-                templates['Linkedin'].append(im)
-            elif("twitter" in infile):
-                templates['Twitter'].append(im)
+            if cache.read(infile) == False:
+                if("instagram" in infile.lower()):
+                    templates['Instagram'].append(im)
+                    cache.write([infile,"instagram"])
+                elif("facebook" in infile.lower()):
+                    templates['Facebook'].append(im)
+                    cache.write([infile,"facebook"])
+                elif("linkedin" in infile):
+                    templates['Linkedin'].append(im)
+                    cache.write([infile,"linkedin"])
+                elif("twitter" in infile):
+                    templates['Twitter'].append(im)
+                    cache.write([infile,"twitter"])
+                else:
+                    print("NO KEYWORD IN THE FILENAME FOUND TO INDICATE THE APPROPRIATE TEMPLATE TYPE")
             else:
-                print("NO KEYWORD IN THE FILENAME FOUND TO INDICATE THE APPROPRIATE TEMPLATE TYPE")
+                if("instagram" in infile.lower()):
+                    templates['Instagram'].append(im)
+                elif("facebook" in infile.lower()):
+                    templates['Facebook'].append(im)
+                elif("linkedin" in infile):
+                    templates['Linkedin'].append(im)
+                elif("twitter" in infile):
+                    templates['Twitter'].append(im)
+                else:
+                    print("NO KEYWORD IN THE FILENAME FOUND TO INDICATE THE APPROPRIATE TEMPLATE TYPE")
+
     except IOError:
         pass
 
