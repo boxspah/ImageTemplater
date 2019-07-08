@@ -18,6 +18,7 @@ class CentreSelector:
         self.canvas.bind("<Button-1>", self.canvasCallback)
         self.finalPoint = None
 
+        self.default = Button(self.window, text="Default", command=self.default)
         self.confirm = Button(self.window, text="Confirm", command=self.confirm, state=DISABLED)
 
     def canvasCallback(self, e):
@@ -25,11 +26,16 @@ class CentreSelector:
         if self.confirm['state'] is not NORMAL:
             self.confirm.config(state=NORMAL)
     
+    def default(self):
+        self.finalPoint = (self.orgSize[0]*self.scaleRatio, self.orgSize[1]*self.scaleRatio)
+        self.window.destroy()
+
     def confirm(self):
         self.window.destroy()
 
     def show(self):
         self.canvas.pack()
+        self.default.pack()
         self.confirm.pack()
 
         self.window.mainloop()
