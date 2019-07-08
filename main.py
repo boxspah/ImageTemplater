@@ -1,6 +1,7 @@
 import os
 from PIL import Image
 import cache
+import csv
 
 def mergePics(backG,foreG):
     back = Image.open(backG)
@@ -51,32 +52,25 @@ for infile in os.listdir("templates"):
             if cache.read(infile) == False:
                 if("instagram" in infile.lower()):
                     templates['Instagram'].append(im)
-                    cache.write([infile,"instagram"])
+                    cache.write([infile,im,"instagram"])
                 elif("facebook" in infile.lower()):
                     templates['Facebook'].append(im)
-                    cache.write([infile,"facebook"])
+                    cache.write([infile,im,"facebook"])
                 elif("linkedin" in infile):
                     templates['Linkedin'].append(im)
-                    cache.write([infile,"linkedin"])
+                    cache.write([infile,im,"linkedin"])
                 elif("twitter" in infile):
                     templates['Twitter'].append(im)
-                    cache.write([infile,"twitter"])
+                    cache.write([infile,im,"twitter"])
                 else:
                     print("NO KEYWORD IN THE FILENAME FOUND TO INDICATE THE APPROPRIATE TEMPLATE TYPE")
-            else:
-                if("instagram" in infile.lower()):
-                    templates['Instagram'].append(im)
-                elif("facebook" in infile.lower()):
-                    templates['Facebook'].append(im)
-                elif("linkedin" in infile):
-                    templates['Linkedin'].append(im)
-                elif("twitter" in infile):
-                    templates['Twitter'].append(im)
-                else:
-                    print("NO KEYWORD IN THE FILENAME FOUND TO INDICATE THE APPROPRIATE TEMPLATE TYPE")
-
     except IOError:
         pass
+with open('cache.csv', newline='') as csvfile:
+     reader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+     for row in reader:
+        templates[row[2].capitalize()].append(row[1])
+print(templates)
 
 for im in images:
     platform = None
