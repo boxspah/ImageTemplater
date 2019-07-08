@@ -2,6 +2,7 @@ import os
 from PIL import Image
 from CentreSelector import *
 import math
+import warnings
 
 def mergePics(backG, foreG, centreX, centreY):
     back = Image.open(backG)
@@ -59,7 +60,7 @@ for infile in os.listdir("templates"):
             elif("twitter" in infile):
                 templates['Twitter'].append(im)
             else:
-                print("NO KEYWORD IN THE FILENAME FOUND TO INDICATE THE APPROPRIATE TEMPLATE TYPE")
+                warnings.warn("Could not detect platform from filename for " + infile)
     except IOError:
         pass
 
@@ -76,6 +77,6 @@ for n, im in enumerate(images):
         for t in templates[platform]:
             mergePics(im.filename, t.filename, imgCentrePoints[n][0], imgCentrePoints[n][1])
     else:
-        print("No appropriate templates found.")
+        warnings.warn("No templates found for platform")
 
 print("--- All images processed. ---")
