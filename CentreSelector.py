@@ -1,14 +1,16 @@
 from tkinter import *
 from PIL import Image, ImageTk
 
-class CentreSelector():
+class CentreSelector:
 
     def __init__(self, imFile):
         self.window = Tk()
         self.window.title("Select the centre of the image below:")
 
-        imFile.thumbnail((1200, 1000))
+        self.orgSize = imFile.size
+        imFile.thumbnail((1200, 1000), Image.ANTIALIAS)
         self.cSize = imFile.size
+        self.scaleRatio = self.cSize[0]//self.orgSize[0]
         self.imFile = ImageTk.PhotoImage(imFile)
 
         self.canvas = Canvas(self.window, width=self.cSize[0], height=self.cSize[1])
@@ -19,13 +21,11 @@ class CentreSelector():
         self.confirm = Button(self.window, text="Confirm", command=self.confirm, state=DISABLED)
 
     def canvasCallback(self, e):
-        self.finalPoint = (e.x, e.y)
-        print(self.finalPoint)
+        self.finalPoint = (e.x*self.scaleRatio, e.y*self.scaleRatio)
         if self.confirm['state'] is not NORMAL:
             self.confirm.config(state=NORMAL)
     
     def confirm(self):
-        print('Position confirmed.')
         self.window.destroy()
 
     def show(self):
