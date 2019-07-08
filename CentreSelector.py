@@ -10,7 +10,7 @@ class CentreSelector:
         self.orgSize = imFile.size
         imFile.thumbnail((1200, 1000), Image.ANTIALIAS)
         self.cSize = imFile.size
-        self.scaleRatio = self.cSize[0]//self.orgSize[0]
+        self.scaleRatio = self.cSize[0]/self.orgSize[0]
         self.imFile = ImageTk.PhotoImage(imFile)
 
         self.canvas = Canvas(self.window, width=self.cSize[0], height=self.cSize[1])
@@ -22,12 +22,12 @@ class CentreSelector:
         self.confirm = Button(self.window, text="Confirm", command=self.confirm, state=DISABLED)
 
     def canvasCallback(self, e):
-        self.finalPoint = (e.x*self.scaleRatio, e.y*self.scaleRatio)
+        self.finalPoint = (round(e.x*self.scaleRatio, 0), round(e.y*self.scaleRatio, 0))
         if self.confirm['state'] is not NORMAL:
             self.confirm.config(state=NORMAL)
     
     def default(self):
-        self.finalPoint = (self.orgSize[0]*self.scaleRatio, self.orgSize[1]*self.scaleRatio)
+        self.finalPoint = (self.orgSize[0], self.orgSize[1])
         self.window.destroy()
 
     def confirm(self):
