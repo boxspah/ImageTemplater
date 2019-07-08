@@ -18,6 +18,8 @@ class CentreSelector:
         self.canvas.bind("<Button-1>", self.canvasCallback)
         self.finalPoint = None
 
+        self.rename = Entry(self.window, width=50)
+
         self.default = Button(self.window, text="Default", command=self.default)
         self.confirm = Button(self.window, text="Confirm", command=self.confirm, state=DISABLED)
 
@@ -28,13 +30,17 @@ class CentreSelector:
     
     def default(self):
         self.finalPoint = (self.orgSize[0], self.orgSize[1])
+        self.fName = 'new.png'
         self.window.destroy()
 
     def confirm(self):
+        self.fName = self.rename.get()
         self.window.destroy()
 
     def show(self):
         self.canvas.pack()
+        self.rename.pack()
+        self.rename.insert(0, 'new.png')    # default filename
         self.default.pack()
         self.confirm.pack()
 
@@ -42,3 +48,6 @@ class CentreSelector:
 
     def getResult(self):
         return self.finalPoint
+
+    def getFilename(self):
+        return self.fName
