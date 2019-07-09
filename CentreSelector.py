@@ -51,6 +51,21 @@ class CentreSelector:
         self._drag_data['y'] = event.y
 
     def on_drag_release(self, event):
+        # snap to template lines if near them
+        threshold = 10
+        location = self.canvas.bbox(self._drag_data['item'])
+        if abs(location[2]-self.canvasSize[0]) < threshold:
+            self.canvas.move(self._drag_data['item'], -location[2]+self.canvasSize[0], 0)
+            print('Snapping to right boundary:', -location[2]+self.canvasSize[0])
+        if abs(location[0]) < threshold:
+            self.canvas.move(self._drag_data['item'], -location[0], 0)
+            print('Snapping to left boundary:', -location[0])
+        if abs(location[3]-self.canvasSize[1]) < threshold:
+            self.canvas.move(self._drag_data['item'], 0, -location[3]+self.canvasSize[1])
+            print('Snapping to lower boundary:', -location[3]+self.canvasSize[1])
+        if abs(location[1]) < threshold:
+            self.canvas.move(self._drag_data['item'], 0, -location[1])
+            print('Snapping to upper boundary:', -location[1])
         # reset the drag information
         self._drag_data['item'] = None
         self._drag_data['x'] = 0
