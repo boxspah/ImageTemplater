@@ -1,35 +1,43 @@
-from tkinter import *
+import tkinter as tk
 from PIL import Image, ImageTk
+
+class Displayable:
+    def __init__(self, image, maxDimensions=(1200, 1000)):
+        self.initialSize = image.size
+        self.newImage = image.copy()
+        self.newImage.thumbnail(maxDimensions, Image.ANTIALIAS)
+        self.size = self.newImage.size
+        self.scaleRatio = self.size[0]/image.size[0]
+
+    def getPhotoImage(self):
+        return ImageTk.PhotoImage(self.newImage)
 
 class CentreSelector:
 
-    def __init__(self, imFile):
-        self.window = Tk()
-        self.window.title("Select the centre of the image below:")
+    def __init__(self, template, image):
+        self.window = tk.Tk()
+        self.window.title("Position the image in the template")
 
-        self.orgSize = imFile.size
-        imFile.thumbnail((1200, 1000), Image.ANTIALIAS)
-        self.cSize = imFile.size
-        self.scaleRatio = self.cSize[0]/self.orgSize[0]
-        self.imFile = ImageTk.PhotoImage(imFile)
-
-        self.canvas = Canvas(self.window, width=self.cSize[0], height=self.cSize[1])
-        self.image = self.canvas.create_image(self.cSize[0]//2, self.cSize[1]//2, anchor=CENTER, image=self.imFile)
+        self.canvasBg = Displayable(template)
+        self.canvasSize = self.canvasBg.size
+        self.canvas = tk.Canvas(self.window, width=self.canvasSize[0], height=self.canvasSize[1])
+        self.canvasBgPhoto = self.canvasBg.getPhotoImage()
+        self.canvasImg = self.canvas.create_image(self.canvasSize[0], self.canvasSize[1], anchor=tk.SE, image=self.canvasBgPhoto)
         self.canvas.bind("<Button-1>", self.canvasCallback)
         self.finalPoint = None
 
-        self.rename = Entry(self.window, width=50)
+        self.rename = tk.Entry(self.window, width=50)
 
-        self.default = Button(self.window, text="Default", command=self.default)
-        self.confirm = Button(self.window, text="Confirm", command=self.confirm, state=DISABLED)
+        self.default = tk.Button(self.window, text="Default", command=self.default)
+        self.confirm = tk.Button(self.window, text="Confirm", command=self.confirm, state=tk.DISABLED)
 
     def canvasCallback(self, e):
-        self.finalPoint = (round(e.x*self.scaleRatio, 0), round(e.y*self.scaleRatio, 0))
-        if self.confirm['state'] is not NORMAL:
-            self.confirm.config(state=NORMAL)
+        self.finalPoint = (round(e.x*self.canvasBg.scaleRatio, 0), round(e.y*self.canvasBg.scaleRatio, 0))
+        if self.confirm['state'] is not tk.NORMAL:
+            self.confirm.config(state=tk.NORMAL)
     
     def default(self):
-        self.finalPoint = (self.orgSize[0], self.orgSize[1])
+        self.finalPoint = (round(self.canvasBg.initialSize[0]/2, 0), round(self.canvasBg.initialSize[1]/2, 0))
         self.fName = 'new.png'
         self.window.destroy()
 
