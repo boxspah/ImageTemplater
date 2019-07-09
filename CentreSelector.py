@@ -62,7 +62,9 @@ class CentreSelector:
 
     def default(self):
         self.fName = 'new.png'
-        self.window.destroy()
+        # move image to template centre
+        image = self.canvas.find_withtag('draggable')
+        self.canvas.coords(image, self.canvasSize[0]//2, self.canvasSize[1]//2)
 
     def confirm(self):
         self.fName = self.rename.get()
