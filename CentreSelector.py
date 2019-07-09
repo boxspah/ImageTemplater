@@ -1,5 +1,6 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+import re
 
 class Displayable:
     def __init__(self, image, maxDimensions=(1200, 1000)):
@@ -58,4 +59,8 @@ class CentreSelector:
         return self.finalPoint
 
     def getFilename(self):
-        return self.fName
+        name = self.fName
+        if re.match(r"^[a-zA-Z0-9 ]+\.png$", name):
+            return self.fName
+        else:
+            return self.fName + '.png'
