@@ -14,31 +14,53 @@ class Displayable:
         return ImageTk.PhotoImage(self.newImage)
 
 class CentreSelector:
-
     def __init__(self, template, image):
         self.window = tk.Tk()
-        self.window.title("Position the image in the template")
+        self.window.title('Position the image in the template')
 
         self.canvasBg = Displayable(template)
         self.canvasSize = self.canvasBg.size
         self.canvas = tk.Canvas(self.window, width=self.canvasSize[0], height=self.canvasSize[1])
+
+        self.image = Displayable(image)
+        self.imagePhoto = self.image.getPhotoImage()
+        self.canvas.create_image(self.canvasSize[0]//2, self.canvasSize[1]//2, anchor=tk.CENTER, image=self.imagePhoto, tags='draggable')
+        self._drag_data = {'x': 0, 'y': 0, 'item': None}
+        self.canvas.bind('<ButtonPress-1>', self.on_drag_start)
+        self.canvas.bind('<ButtonRelease-1>', self.on_drag_release)
+        self.canvas.bind('<B1-Motion>', self.on_drag_motion)
+
         self.canvasBgPhoto = self.canvasBg.getPhotoImage()
-        self.canvasImg = self.canvas.create_image(self.canvasSize[0], self.canvasSize[1], anchor=tk.SE, image=self.canvasBgPhoto)
-        self.canvas.bind("<Button-1>", self.canvasCallback)
-        self.finalPoint = None
+        self.canvas.create_image(self.canvasSize[0], self.canvasSize[1], anchor=tk.SE, image=self.canvasBgPhoto)
 
         self.rename = tk.Entry(self.window, width=50)
 
-        self.default = tk.Button(self.window, text="Default", command=self.default)
-        self.confirm = tk.Button(self.window, text="Confirm", command=self.confirm, state=tk.DISABLED)
-
-    def canvasCallback(self, e):
-        self.finalPoint = (round(e.x*self.canvasBg.scaleRatio, 0), round(e.y*self.canvasBg.scaleRatio, 0))
-        if self.confirm['state'] is not tk.NORMAL:
-            self.confirm.config(state=tk.NORMAL)
+        self.default = tk.Button(self.window, text='Default', command=self.default)
+        self.confirm = tk.Button(self.window, text='Confirm', command=self.confirm)
     
+    def on_drag_start(self, event):
+        # record the item and its location
+        self._drag_data['item'] = self.canvas.find_withtag('draggable')
+        self._drag_data['x'] = event.x
+        self._drag_data['y'] = event.y
+
+    def on_drag_release(self, event):
+        # reset the drag information
+        self._drag_data['item'] = None
+        self._drag_data['x'] = 0
+        self._drag_data['y'] = 0
+
+    def on_drag_motion(self, event):
+        # compute how much the mouse has moved
+        delta_x = event.x - self._drag_data['x']
+        delta_y = event.y - self._drag_data['y']
+        # move the object the appropriate amount
+        self.canvas.move(self._drag_data['item'], delta_x, delta_y)
+        # record the new position
+        self._drag_data['x'] = event.x
+        self._drag_data['y'] = event.y
+
     def default(self):
-        self.finalPoint = (round(self.canvasBg.initialSize[0]/2, 0), round(self.canvasBg.initialSize[1]/2, 0))
         self.fName = 'new.png'
         self.window.destroy()
 
@@ -54,9 +76,6 @@ class CentreSelector:
         self.confirm.pack()
 
         self.window.mainloop()
-
-    def getResult(self):
-        return self.finalPoint
 
     def getFilename(self):
         name = self.fName
