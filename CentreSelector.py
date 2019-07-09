@@ -1,6 +1,8 @@
 import tkinter as tk
+import tkinter.filedialog
 from PIL import Image, ImageTk
 import re
+import datetime
 
 class Displayable:
     def __init__(self, image, maxDimensions=(1200, 1000)):
@@ -33,7 +35,10 @@ class CentreSelector:
         self.canvasBgPhoto = self.canvasBg.getPhotoImage()
         self.canvas.create_image(self.canvasSize[0], self.canvasSize[1], anchor=tk.SE, image=self.canvasBgPhoto)
 
-        self.rename = tk.Entry(self.window, width=50)
+        self.rename = tk.Frame()
+        self.filename = tk.Entry(self.rename, width=50)
+        self.filesearch = tk.Button(self.rename, text='Browse', command=self.browseFiles)
+        self.fName = ''
 
         self.default = tk.Button(self.window, text='Default', command=self.default)
         self.confirm = tk.Button(self.window, text='Confirm', command=self.confirm)
@@ -60,20 +65,32 @@ class CentreSelector:
         self._drag_data['x'] = event.x
         self._drag_data['y'] = event.y
 
+    def browseFiles(self):
+        self.fName = tk.filedialog.asksaveasfilename(title="Select a location to save to:", filetypes=(('PNG', '*.png'), ('All files', '*.*')))
+        self.filename.delete(0, tk.END)
+        self.filename.insert(0, self.fName)
+
     def default(self):
-        self.fName = 'new.png'
+        self.fName = 'out/' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '.png'
+        self.filename.delete(0, tk.END)
+        self.filename.insert(0, self.fName)
         # move image to template centre
         image = self.canvas.find_withtag('draggable')
         self.canvas.coords(image, self.canvasSize[0]//2, self.canvasSize[1]//2)
 
     def confirm(self):
-        self.fName = self.rename.get()
-        self.window.destroy()
+        if len(self.filename.get()):
+            self.fName = self.filename.get()
+            self.window.destroy()
+        else:
+            self.filename.config(bg='#ff8080')
 
     def show(self):
         self.canvas.pack()
+        self.filename.pack(side=tk.LEFT)
+        self.filename.insert(0, 'out/' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '.png')    # default filename
+        self.filesearch.pack(side=tk.RIGHT)
         self.rename.pack()
-        self.rename.insert(0, 'new.png')    # default filename
         self.default.pack()
         self.confirm.pack()
 
