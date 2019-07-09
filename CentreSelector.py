@@ -35,8 +35,9 @@ class CentreSelector:
         self.canvasBgPhoto = self.canvasBg.getPhotoImage()
         self.canvas.create_image(self.canvasSize[0], self.canvasSize[1], anchor=tk.SE, image=self.canvasBgPhoto)
 
-        self.rename = tk.Frame()
-        self.filename = tk.Entry(self.rename, width=50)
+        self.rename = tk.Frame(bd=3, relief=tk.GROOVE, padx=10, pady=5)
+        self.lab_rename = tk.Label(self.rename, text='Output filename:')
+        self.filename = tk.Entry(self.rename, width=70)
         self.filesearch = tk.Button(self.rename, text='Browse', command=self.browseFiles)
         self.fName = ''
 
@@ -87,6 +88,7 @@ class CentreSelector:
 
     def show(self):
         self.canvas.pack()
+        self.lab_rename.pack(side=tk.TOP)
         self.filename.pack(side=tk.LEFT)
         self.filename.insert(0, 'out/' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '.png')    # default filename
         self.filesearch.pack(side=tk.RIGHT)
