@@ -8,7 +8,9 @@ class Displayable:
     # stores a smaller version of image intended to fit within maxDimensions
     # stores resulting scale ratio in scaleRatio
     def __init__(self, image, maxDimensions=(1200, 1000)):
-        self.initialSize = image.size
+        self.initImage = image
+        self.initSize = image.size
+
         self.image = image.copy()
         self.image.thumbnail(maxDimensions, Image.ANTIALIAS)
         self.size = self.image.size
@@ -23,9 +25,9 @@ class Displayable:
     # absolute=True forces scaling relative to original Displayable size
     def scale(self, ratio, absolute=False):
         if absolute:
-            self.image = self.image.resize((int(ratio*self.scaleRatio*self.initialSize[0]), int(ratio*self.scaleRatio*self.initialSize[1])), resample=Image.ANTIALIAS)
+            self.image = self.initImage.resize((int(ratio*self.scaleRatio*self.initSize[0]), int(ratio*self.scaleRatio*self.initSize[1])), resample=Image.ANTIALIAS)
         else:
-            self.image = self.image.resize((int(ratio*self.image.width), int(ratio*self.image.height)), resample=Image.ANTIALIAS)
+            self.image = self.initImage.resize((int(ratio*self.image.width), int(ratio*self.image.height)), resample=Image.ANTIALIAS)
 
 class CentreSelector:
     def __init__(self, template, image):
@@ -40,6 +42,7 @@ class CentreSelector:
         self.imagePhoto = self.image.getPhotoImage()
         self.canvas_image = self.canvas.create_image(self.canvasSize[0]//2, self.canvasSize[1]//2, anchor=tk.CENTER, image=self.imagePhoto, tags='draggable')
         self._drag_data = {'x': 0, 'y': 0, 'item': None}
+        self.zoomLvl = 0
         self.canvas.bind('<ButtonPress-1>', self.on_drag_start)
         self.canvas.bind('<ButtonRelease-1>', self.on_drag_release)
         self.canvas.bind('<B1-Motion>', self.on_drag_motion)
@@ -95,20 +98,15 @@ class CentreSelector:
         self._drag_data['y'] = event.y
 
     def zoom(self, e):
-        item = self.canvas_image
-        dim = self.canvas.bbox(item)
-        w = dim[2] - dim[0]
-        h = dim[3] - dim[1]
         # scroll down
         if e.num == 5 or e.delta == -120:
-            self.image.scale(0.95)
-            self.imagePhoto = self.image.getPhotoImage()
-            self.canvas.itemconfig(item, image=self.imagePhoto)
+            self.zoomLvl -= 1
         # scroll up
         if e.num == 4 or e.delta == 120:
-            self.image.scale(1.05)
-            self.imagePhoto = self.image.getPhotoImage()
-            self.canvas.itemconfig(item, image=self.imagePhoto)
+            self.zoomLvl += 1
+        self.image.scale(1 + self.zoomLvl*0.05, absolute=True)
+        self.imagePhoto = self.image.getPhotoImage()
+        self.canvas.itemconfig(self.canvas_image, image=self.imagePhoto)
 
     def browseFiles(self):
         tempName = tk.filedialog.asksaveasfilename(title="Select a location to save to:", filetypes=(('PNG', '*.png'), ('All files', '*.*')))
