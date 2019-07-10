@@ -5,15 +5,27 @@ import re
 import datetime
 
 class Displayable:
+    # stores a smaller version of image intended to fit within maxDimensions
+    # stores resulting scale ratio in scaleRatio
     def __init__(self, image, maxDimensions=(1200, 1000)):
         self.initialSize = image.size
-        self.newImage = image.copy()
-        self.newImage.thumbnail(maxDimensions, Image.ANTIALIAS)
-        self.size = self.newImage.size
-        self.scaleRatio = self.size[0]/image.size[0]
+        self.image = image.copy()
+        self.image.thumbnail(maxDimensions, Image.ANTIALIAS)
+        self.size = self.image.size
+        self.scaleRatio = self.size[0]/image.width
 
+    # returns a PhotoImage of image for use with tkinter
     def getPhotoImage(self):
-        return ImageTk.PhotoImage(self.newImage)
+        return ImageTk.PhotoImage(self.image)
+
+    # resizes image by ratio
+    # ratio scales relative to current image size by default (deceleration behaviour)
+    # absolute=True forces scaling relative to original Displayable size
+    def scale(self, ratio, absolute=False):
+        if absolute:
+            self.image = self.image.resize((int(ratio*self.scaleRatio*self.initialSize[0]), int(ratio*self.scaleRatio*self.initialSize[1])), resample=Image.ANTIALIAS)
+        else:
+            self.image = self.image.resize((int(ratio*self.image.width), int(ratio*self.image.height)), resample=Image.ANTIALIAS)
 
 class CentreSelector:
     def __init__(self, template, image):
@@ -26,11 +38,12 @@ class CentreSelector:
 
         self.image = Displayable(image)
         self.imagePhoto = self.image.getPhotoImage()
-        self.canvas.create_image(self.canvasSize[0]//2, self.canvasSize[1]//2, anchor=tk.CENTER, image=self.imagePhoto, tags='draggable')
+        self.canvas_image = self.canvas.create_image(self.canvasSize[0]//2, self.canvasSize[1]//2, anchor=tk.CENTER, image=self.imagePhoto, tags='draggable')
         self._drag_data = {'x': 0, 'y': 0, 'item': None}
         self.canvas.bind('<ButtonPress-1>', self.on_drag_start)
         self.canvas.bind('<ButtonRelease-1>', self.on_drag_release)
         self.canvas.bind('<B1-Motion>', self.on_drag_motion)
+        self.canvas.bind('<MouseWheel>', self.zoom)
 
         self.canvasBgPhoto = self.canvasBg.getPhotoImage()
         self.canvas.create_image(self.canvasSize[0], self.canvasSize[1], anchor=tk.SE, image=self.canvasBgPhoto)
@@ -81,6 +94,22 @@ class CentreSelector:
         self._drag_data['x'] = event.x
         self._drag_data['y'] = event.y
 
+    def zoom(self, e):
+        item = self.canvas_image
+        dim = self.canvas.bbox(item)
+        w = dim[2] - dim[0]
+        h = dim[3] - dim[1]
+        # scroll down
+        if e.num == 5 or e.delta == -120:
+            self.image.scale(0.95)
+            self.imagePhoto = self.image.getPhotoImage()
+            self.canvas.itemconfig(item, image=self.imagePhoto)
+        # scroll up
+        if e.num == 4 or e.delta == 120:
+            self.image.scale(1.05)
+            self.imagePhoto = self.image.getPhotoImage()
+            self.canvas.itemconfig(item, image=self.imagePhoto)
+
     def browseFiles(self):
         self.fName = tk.filedialog.asksaveasfilename(title="Select a location to save to:", filetypes=(('PNG', '*.png'), ('All files', '*.*')))
         self.filename.delete(0, tk.END)
@@ -91,8 +120,7 @@ class CentreSelector:
         self.filename.delete(0, tk.END)
         self.filename.insert(0, self.fName)
         # move image to template centre
-        image = self.canvas.find_withtag('draggable')
-        self.canvas.coords(image, self.canvasSize[0]//2, self.canvasSize[1]//2)
+        self.canvas.coords(self.canvas_image, self.canvasSize[0]//2, self.canvasSize[1]//2)
 
     def confirm(self):
         if len(self.filename.get()):
