@@ -121,6 +121,11 @@ class CentreSelector:
         self.filename.insert(0, self.fName)
         # move image to template centre
         self.canvas.coords(self.canvas_image, self.canvasSize[0]//2, self.canvasSize[1]//2)
+        # reset zoom
+        self.zoomLvl = 0
+        self.image.scale(1, absolute=True)
+        self.imagePhoto = self.image.getPhotoImage()
+        self.canvas.itemconfig(self.canvas_image, image=self.imagePhoto)
 
     def confirm(self):
         if len(self.filename.get()):
