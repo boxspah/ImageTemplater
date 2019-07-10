@@ -145,7 +145,7 @@ class CentreSelector:
 
     def getFilename(self):
         name = self.fName
-        if re.match(r"^[a-zA-Z0-9 ]+\.png$", name):
+        if re.match(r'^[a-zA-Z0-9 \-_\(\)]+\.png$', name):
             return self.fName
         else:
             return self.fName + '.png'
