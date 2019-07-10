@@ -111,9 +111,11 @@ class CentreSelector:
             self.canvas.itemconfig(item, image=self.imagePhoto)
 
     def browseFiles(self):
-        self.fName = tk.filedialog.asksaveasfilename(title="Select a location to save to:", filetypes=(('PNG', '*.png'), ('All files', '*.*')))
-        self.filename.delete(0, tk.END)
-        self.filename.insert(0, self.fName)
+        tempName = tk.filedialog.asksaveasfilename(title="Select a location to save to:", filetypes=(('PNG', '*.png'), ('All files', '*.*')))
+        if len(tempName) > 0:
+            self.fName = tempName
+            self.filename.delete(0, tk.END)
+            self.filename.insert(0, self.fName)
 
     def default(self):
         self.fName = 'out/' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '.png'
