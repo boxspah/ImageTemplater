@@ -7,7 +7,7 @@ import datetime
 class Displayable:
     # stores a smaller version of image intended to fit within maxDimensions
     # stores resulting scale ratio in scaleRatio
-    def __init__(self, image, maxDimensions=(1200, 1000)):
+    def __init__(self, image, maxDimensions=(1400, 700)):
         self.initImage = image
         self.initSize = image.size
 
@@ -41,7 +41,7 @@ class ArrangeWindow:
         template = Image.open(template)
         self.canvasBg = Displayable(template)
         self.canvasSize = self.canvasBg.size
-        self.canvas = tk.Canvas(self.window, width=self.canvasSize[0], height=self.canvasSize[1])
+        self.canvas = tk.Canvas(self.window, width=self.canvasSize[0], height=self.canvasSize[1], borderwidth=0, highlightthickness=0)
 
         image = Image.open(image)
         self.image = Displayable(image)
@@ -78,16 +78,8 @@ class ArrangeWindow:
         location = self.canvas.bbox(self._drag_data['item'])
         if abs(location[2]-self.canvasSize[0]) < threshold:
             self.canvas.move(self._drag_data['item'], -location[2]+self.canvasSize[0], 0)
-            print('Snapping to right boundary:', -location[2]+self.canvasSize[0])
-        if abs(location[0]) < threshold:
-            self.canvas.move(self._drag_data['item'], -location[0], 0)
-            print('Snapping to left boundary:', -location[0])
         if abs(location[3]-self.canvasSize[1]) < threshold:
             self.canvas.move(self._drag_data['item'], 0, -location[3]+self.canvasSize[1])
-            print('Snapping to lower boundary:', -location[3]+self.canvasSize[1])
-        if abs(location[1]) < threshold:
-            self.canvas.move(self._drag_data['item'], 0, -location[1])
-            print('Snapping to upper boundary:', -location[1])
         # reset the drag information
         self._drag_data['item'] = None
         self._drag_data['x'] = 0
