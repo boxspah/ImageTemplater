@@ -11,7 +11,7 @@ class Displayable:
         self.initImage = image
         self.initSize = image.size
 
-        # HACK: work around scoping issue with image
+        # HACK: Work around scoping issue with image files
         filename = image.filename
         f = Image.open(filename)
         self.image = f.copy()
@@ -35,6 +35,7 @@ class Displayable:
 
 class ArrangeWindow:
     def __init__(self, template, image):
+        # TODOC
         self.window = tk.Tk()
         self.window.title('Position the image in the template')
 
@@ -102,6 +103,7 @@ class ArrangeWindow:
         # scroll up
         if e.num == 4 or e.delta == 120:
             self.zoomLvl += 1
+        # FIXME: set value equal to zoom amount instead of arbitary level
         self.image.scale(1 + self.zoomLvl*0.05, absolute=True)
         self.imagePhoto = self.image.getPhotoImage()
         self.canvas.itemconfig(self.canvas_image, image=self.imagePhoto)
@@ -130,6 +132,7 @@ class ArrangeWindow:
             self.fName = self.filename.get()
             image_pos = self.canvas.bbox(self.canvas_image)
             self.mergeData = {
+                # FIXME: Use 4-tuple for crop values
                 'crop_left': -image_pos[0]/(1+self.zoomLvl*0.05)/self.image.size[0] if image_pos[0] < 0 else 0,
                 'crop_top': -image_pos[1]/(1+self.zoomLvl*0.05)/self.image.size[1] if image_pos[1] < 0 else 0,
                 'crop_right': (image_pos[2]-self.canvasSize[0])/(1+self.zoomLvl*0.05)/self.image.size[0] if image_pos[2] > self.canvasSize[0] else 0,

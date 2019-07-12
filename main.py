@@ -11,6 +11,7 @@ platform_list = ['Instagram', 'Facebook', 'Twitter', 'Linkedin']
 for p in platform_list:
     templates[p] = []
 
+# TODO: Review whether PNG conversion is even necessary
 for im in os.listdir("images"):
     try:
         with Image.open('images/' + im) as image:
@@ -23,6 +24,7 @@ for im in os.listdir("images"):
     except IOError:
         pass
 
+# FIXME: Images array should store only filenames
 for infile in os.listdir("images"):
     try:
         with Image.open('images/' + infile) as im:
@@ -34,10 +36,12 @@ for infile in os.listdir("images"):
 if len(images) is 0:
     raise Exception('No images found.')
 
+# FIXME: Templates should be stored as filenames
 for infile in os.listdir("templates"):
     try:
         with Image.open('templates/' + infile) as im:
             print('Found template:', infile, im.format, "%dx%d" % im.size, im.mode)
+            # FIXME: Optimize platform categorization
             if("instagram" in infile.lower()):
                 templates['Instagram'].append(im)
             elif("facebook" in infile.lower()):
@@ -68,4 +72,5 @@ for im in images:
     else:
         warnings.warn("No templates found for platform")
 
+# TODO: Display message using GUI
 print("--- All images processed. ---")
