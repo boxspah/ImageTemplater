@@ -114,7 +114,7 @@ class ArrangeWindow:
             self.filename.insert(0, self.fName)
 
     def default(self):
-        self.fName = 'out/' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '.png'
+        self.fName = 'out/' + datetime.datetime.now().strftime('%Y-%m-%d %H%M%S') + '.png'
         self.filename.delete(0, tk.END)
         self.filename.insert(0, self.fName)
         # move image to bottom-right
@@ -141,7 +141,7 @@ class ArrangeWindow:
         self.canvas.pack()
         self.lab_rename.pack(side=tk.TOP)
         self.filename.pack(side=tk.LEFT)
-        self.filename.insert(0, 'out/' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '.png')    # default filename
+        self.filename.insert(0, 'out/' + datetime.datetime.now().strftime('%Y-%m-%d %H%M%S') + '.png')    # default filename
         self.filesearch.pack(side=tk.RIGHT)
         self.rename.pack()
         self.default.pack()
@@ -151,7 +151,7 @@ class ArrangeWindow:
 
     def getFilename(self):
         name = self.fName
-        if re.match(r'^[a-zA-Z0-9 \-_\(\)]+\.png$', name):
+        if re.match(r'^[a-zA-Z0-9 \-_\(\)\/]+\.png$', name):
             return self.fName
         else:
             return self.fName + '.png'
