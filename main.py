@@ -16,8 +16,8 @@ for im in os.listdir("images"):
     try:
         with Image.open('images/' + im) as image:
             if os.path.splitext(im)[1] != ".png":
-                bg = Image.new('RGBA',image.size,(255,255,255))
-                bg.paste(image,(0,0))
+                bg = Image.new('RGBA', image.size, (255, 255, 255, 0))
+                bg.paste(image)
                 tempName = os.path.splitext(im)[0]
                 bg.save(("images/"+tempName+".png"), quality=100)
                 os.remove("images/"+im)
