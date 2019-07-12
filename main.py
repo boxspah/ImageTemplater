@@ -24,32 +24,32 @@ for im in os.listdir("images"):
     except IOError:
         pass
 
-# FIXME: Images array should store only filenames
-for infile in os.listdir("images"):
+for infile in os.listdir('images'):
     try:
-        with Image.open('images/' + infile) as im:
+        fpath = 'images/' + infile
+        with Image.open(fpath) as im:
             print('Found image:', infile, im.format, "%dx%d" % im.size, im.mode)
-            images.append(im)
+            images.append(fpath)
     except IOError:
         pass
 
 if len(images) is 0:
     raise Exception('No images found.')
 
-# FIXME: Templates should be stored as filenames
-for infile in os.listdir("templates"):
+for infile in os.listdir('templates'):
     try:
-        with Image.open('templates/' + infile) as im:
+        fpath = 'templates/' + infile
+        with Image.open(fpath) as im:
             print('Found template:', infile, im.format, "%dx%d" % im.size, im.mode)
             # FIXME: Optimize platform categorization
             if("instagram" in infile.lower()):
-                templates['Instagram'].append(im)
+                templates['Instagram'].append(fpath)
             elif("facebook" in infile.lower()):
-                templates['Facebook'].append(im)
+                templates['Facebook'].append(fpath)
             elif("linkedin" in infile):
-                templates['Linkedin'].append(im)
+                templates['Linkedin'].append(fpath)
             elif("twitter" in infile):
-                templates['Twitter'].append(im)
+                templates['Twitter'].append(fpath)
             else:
                 warnings.warn("Could not detect platform from filename for " + infile)
     except IOError:
@@ -57,7 +57,7 @@ for infile in os.listdir("templates"):
 
 for im in images:
     platform = None
-    print(f'Select a platform for {im.filename}:')
+    print(f'Select a platform for {im}:')
     while platform is None:
         for i, p in enumerate(platform_list):
             print(f'\t[{i}] {p}')
@@ -66,9 +66,9 @@ for im in images:
 
     if len(templates[platform]) > 0:
         for t in templates[platform]:
-            a = ArrangeWindow(t.filename, im.filename)
+            a = ArrangeWindow(t, im)
             a.show()
-            merge(t.filename, im.filename, a.getMergeData(), a.getFilename())
+            merge(t, im, a.getMergeData(), a.getFilename())
     else:
         warnings.warn("No templates found for platform")
 
