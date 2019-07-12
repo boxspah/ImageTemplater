@@ -11,7 +11,11 @@ class Displayable:
         self.initImage = image
         self.initSize = image.size
 
-        self.image = image.copy()
+        # HACK: work around scoping issue with image
+        filename = image.filename
+        f = Image.open(filename)
+        self.image = f.copy()
+
         self.image.thumbnail(maxDimensions, Image.ANTIALIAS)
         self.size = self.image.size
         self.scaleRatio = self.size[0]/image.width
@@ -29,15 +33,17 @@ class Displayable:
         else:
             self.image = self.initImage.resize((int(ratio*self.image.width), int(ratio*self.image.height)), resample=Image.ANTIALIAS)
 
-class CentreSelector:
+class ArrangeWindow:
     def __init__(self, template, image):
         self.window = tk.Tk()
         self.window.title('Position the image in the template')
 
+        template = Image.open(template)
         self.canvasBg = Displayable(template)
         self.canvasSize = self.canvasBg.size
         self.canvas = tk.Canvas(self.window, width=self.canvasSize[0], height=self.canvasSize[1])
 
+        image = Image.open(image)
         self.image = Displayable(image)
         self.imagePhoto = self.image.getPhotoImage()
         self.canvas_image = self.canvas.create_image(self.canvasSize[0]//2, self.canvasSize[1]//2, anchor=tk.CENTER, image=self.imagePhoto, tags='draggable')
@@ -130,6 +136,11 @@ class CentreSelector:
     def confirm(self):
         if len(self.filename.get()):
             self.fName = self.filename.get()
+            self.mergeData = {
+                'image_pos': self.canvas.bbox(self.canvas_image),
+                'canvas_scale': self.canvasBg.scaleRatio,
+                'image_scale': self.image.scaleRatio,
+            }
             self.window.destroy()
         else:
             self.filename.config(bg='#ff8080')
@@ -152,3 +163,6 @@ class CentreSelector:
             return self.fName
         else:
             return self.fName + '.png'
+    
+    def getMergeData(self):
+        return self.mergeData
