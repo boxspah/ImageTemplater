@@ -1,11 +1,16 @@
 from PIL import Image
 
-def merge(mergeData):
-    back = Image.open(backG)
-    fore = Image.open(foreG)
-    ratio = min(fore.size[0]/back.size[0], fore.size[1]/back.size[1])
-    back = back.resize((math.floor(back.size[0]*ratio), math.floor(back.size[1]*ratio)), Image.ANTIALIAS)
-    back = back.crop(box=(centreX-fore.size[0]//2, centreY-fore.size[1]//2, centreX+fore.size[0]//2, centreY+fore.size[1]//2))
-    back = back.resize((fore.size[0], fore.size[1]), Image.ANTIALIAS)
-    save = backG[7:-4], foreG[10:-4]
-    Image.alpha_composite(back, fore).save("out/"+str(save)+".png")
+def merge(template, image, mergeData, savefile):
+    background = Image.open(image)
+    foreground = Image.open(template)
+
+    # crops same percentage of the image as was off-screen in the GUI
+    background = background.crop(box=(background.width*mergeData['crop_left'], background.height*mergeData['crop_top'], background.width*(1-mergeData['crop_right']), background.height*(1-mergeData['crop_bottom'])))
+
+    # crops same percentage of the image as was off-screen in the GUI
+    background = background.crop(box=(background.width*mergeData['crop_x'], background.height*mergeData['crop_y'], background.width, background.height))
+    # background = background.resize((int(background.width*ratio), int(background.height*ratio)), Image.ANTIALIAS)
+    # background = background.resize((foreground.width, foreground.height), Image.ANTIALIAS)
+    background.save(savefile)
+    # NOTE: alpha_composite only works if foreground and background are the same size
+    # Image.alpha_composite(background, foreground).save(savefile)

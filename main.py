@@ -65,6 +65,7 @@ for im in images:
             a = ArrangeWindow(t.filename, im.filename)
             a.show()
             print(a.getMergeData())
+            merge(t.filename, im.filename, a.getMergeData(), a.getFilename())
     else:
         warnings.warn("No templates found for platform")
 
