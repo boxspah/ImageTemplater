@@ -128,10 +128,12 @@ class ArrangeWindow:
     def confirm(self):
         if len(self.filename.get()):
             self.fName = self.filename.get()
+            image_pos = self.canvas.bbox(self.canvas_image)
             self.mergeData = {
-                'image_pos': self.canvas.bbox(self.canvas_image),
-                'canvas_scale': self.canvasBg.scaleRatio,
-                'image_scale': self.image.scaleRatio,
+                'crop_left': -image_pos[0]/(1+self.zoomLvl*0.05)/self.image.size[0] if image_pos[0] < 0 else 0,
+                'crop_top': -image_pos[1]/(1+self.zoomLvl*0.05)/self.image.size[1] if image_pos[1] < 0 else 0,
+                'crop_right': (image_pos[2]-self.canvasSize[0])/(1+self.zoomLvl*0.05)/self.image.size[0] if image_pos[2] > self.canvasSize[0] else 0,
+                'crop_bottom': (image_pos[3]-self.canvasSize[1])/(1+self.zoomLvl*0.05)/self.image.size[1] if image_pos[3] > self.canvasSize[1] else 0,
             }
             self.window.destroy()
         else:
@@ -155,6 +157,6 @@ class ArrangeWindow:
             return self.fName
         else:
             return self.fName + '.png'
-    
+
     def getMergeData(self):
         return self.mergeData
