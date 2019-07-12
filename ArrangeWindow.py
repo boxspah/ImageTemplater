@@ -46,7 +46,7 @@ class ArrangeWindow:
         image = Image.open(image)
         self.image = Displayable(image)
         self.imagePhoto = self.image.getPhotoImage()
-        self.canvas_image = self.canvas.create_image(self.canvasSize[0]//2, self.canvasSize[1]//2, anchor=tk.CENTER, image=self.imagePhoto, tags='draggable')
+        self.canvas_image = self.canvas.create_image(self.canvasSize[0], self.canvasSize[1], anchor=tk.SE, image=self.imagePhoto, tags='draggable')
         self._drag_data = {'x': 0, 'y': 0, 'item': None}
         self.zoomLvl = 0
         self.canvas.bind('<ButtonPress-1>', self.on_drag_start)
@@ -117,8 +117,8 @@ class ArrangeWindow:
         self.fName = 'out/' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '.png'
         self.filename.delete(0, tk.END)
         self.filename.insert(0, self.fName)
-        # move image to template centre
-        self.canvas.coords(self.canvas_image, self.canvasSize[0]//2, self.canvasSize[1]//2)
+        # move image to bottom-right
+        self.canvas.coords(self.canvas_image, self.canvasSize[0], self.canvasSize[1])
         # reset zoom
         self.zoomLvl = 0
         self.image.scale(1, absolute=True)
