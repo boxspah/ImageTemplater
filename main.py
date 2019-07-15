@@ -12,19 +12,6 @@ platform_list = ['Instagram', 'Facebook', 'Twitter', 'Linkedin']
 for p in platform_list:
     templates[p] = []
 
-# TODO: Review whether PNG conversion is even necessary
-for im in os.listdir("images"):
-    try:
-        with Image.open('images/' + im) as image:
-            if os.path.splitext(im)[1] != ".png":
-                bg = Image.new('RGBA', image.size, (255, 255, 255, 0))
-                bg.paste(image)
-                tempName = os.path.splitext(im)[0]
-                bg.save(("images/"+tempName+".png"), quality=100)
-                os.remove("images/"+im)
-    except IOError:
-        pass
-
 for infile in os.listdir('images'):
     try:
         fpath = 'images/' + infile
