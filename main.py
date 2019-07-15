@@ -66,7 +66,10 @@ for im in images:
             for t in templates[platform]:
                 a = ArrangeWindow(t, im)
                 a.show()
-                merge(t, im, a.getMergeData(), a.getFilename())
+                try:
+                    merge(t, im, a.getMergeData(), a.getFilename())
+                except AttributeError:
+                    break
         elif not len(templates[platform]):
             warnings.warn(f'No templates found for {platform}')
 
