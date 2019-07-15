@@ -29,6 +29,6 @@ class PlatformSelect:
         # close window and continue only if at least 1 platform is selected
         if sum(sel_array) < 1:
             warnings.warn('No platforms selected. Not closing window.')
-            tkinter.messagebox.showwarning(message='Please select at least one platform.')
+            tkinter.messagebox.showwarning('Select a platform', 'Please select at least one platform from the list.')
         elif sum(sel_array) >= 1:
             self.window.destroy()

@@ -66,6 +66,7 @@ class ArrangeWindow:
     def close(self):
         if tkinter.messagebox.askokcancel("Quit", "Do you really want to quit? All previously edited images will be saved and the program will stop running."):
             self.window.destroy()
+            raise SystemExit('User requested termination')
 
     def on_drag_start(self, event):
         # record the item and its location
