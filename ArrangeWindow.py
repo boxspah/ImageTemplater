@@ -52,7 +52,7 @@ class ArrangeWindow:
         self.imagePhoto = self.image.getPhotoImage()
         self.canvas_image = self.canvas.create_image(self.canvasSize[0], self.canvasSize[1], anchor=tk.SE, image=self.imagePhoto, tags='draggable')
         self._drag_data = {'x': 0, 'y': 0, 'item': None}
-        self.zoomLvl = 0
+        self.zoomAmount = 1
         self.canvas.bind('<ButtonPress-1>', self.on_drag_start)
         self.canvas.bind('<ButtonRelease-1>', self.on_drag_release)
         self.canvas.bind('<B1-Motion>', self.on_drag_motion)
@@ -106,12 +106,11 @@ class ArrangeWindow:
     def zoom(self, e):
         # scroll down
         if e.num == 5 or e.delta == -120:
-            self.zoomLvl -= 1
+            self.zoomAmount -= 0.05
         # scroll up
         if e.num == 4 or e.delta == 120:
-            self.zoomLvl += 1
-        # FIXME: set value equal to zoom amount instead of arbitary level
-        self.image.scale(1 + self.zoomLvl*0.05, absolute=True)
+            self.zoomAmount += 0.05
+        self.image.scale(self.zoomAmount, absolute=True)
         self.imagePhoto = self.image.getPhotoImage()
         self.canvas.itemconfig(self.canvas_image, image=self.imagePhoto)
 
@@ -129,7 +128,7 @@ class ArrangeWindow:
         # move image to bottom-right
         self.canvas.coords(self.canvas_image, self.canvasSize[0], self.canvasSize[1])
         # reset zoom
-        self.zoomLvl = 0
+        self.zoomAmount = 1
         self.image.scale(1, absolute=True)
         self.imagePhoto = self.image.getPhotoImage()
         self.canvas.itemconfig(self.canvas_image, image=self.imagePhoto)
@@ -140,10 +139,10 @@ class ArrangeWindow:
             image_pos = self.canvas.bbox(self.canvas_image)
             self.mergeData = {
                 # FIXME: Use 4-tuple for crop values
-                'crop_left': -image_pos[0]/(1+self.zoomLvl*0.05)/self.image.size[0] if image_pos[0] < 0 else 0,
-                'crop_top': -image_pos[1]/(1+self.zoomLvl*0.05)/self.image.size[1] if image_pos[1] < 0 else 0,
-                'crop_right': (image_pos[2]-self.canvasSize[0])/(1+self.zoomLvl*0.05)/self.image.size[0] if image_pos[2] > self.canvasSize[0] else 0,
-                'crop_bottom': (image_pos[3]-self.canvasSize[1])/(1+self.zoomLvl*0.05)/self.image.size[1] if image_pos[3] > self.canvasSize[1] else 0,
+                'crop_left': -image_pos[0]/self.zoomAmount/self.image.size[0] if image_pos[0] < 0 else 0,
+                'crop_top': -image_pos[1]/self.zoomAmount/self.image.size[1] if image_pos[1] < 0 else 0,
+                'crop_right': (image_pos[2]-self.canvasSize[0])/self.zoomAmount/self.image.size[0] if image_pos[2] > self.canvasSize[0] else 0,
+                'crop_bottom': (image_pos[3]-self.canvasSize[1])/self.zoomAmount/self.image.size[1] if image_pos[3] > self.canvasSize[1] else 0,
             }
             self.window.destroy()
         else:
