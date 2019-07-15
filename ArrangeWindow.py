@@ -9,17 +9,13 @@ class Displayable:
     # stores a smaller version of image intended to fit within maxDimensions
     # stores resulting scale ratio in scaleRatio
     def __init__(self, image, maxDimensions=(1400, 700)):
-        self.initImage = image
-        self.initSize = image.size
+        self.initImage = Image.open(image)
 
-        # HACK: Work around scoping issue with image files
-        filename = image.filename
-        f = Image.open(filename)
-        self.image = f.copy()
-
+        self.image = self.initImage.copy()
         self.image.thumbnail(maxDimensions, Image.ANTIALIAS)
         self.size = self.image.size
-        self.scaleRatio = self.size[0]/image.width
+        self.width, self.height = self.size
+        self.scaleRatio = self.size[0]/self.initImage.width
 
     # returns a PhotoImage of image for use with tkinter
     def getPhotoImage(self):
@@ -30,7 +26,7 @@ class Displayable:
     # absolute=True forces scaling relative to original Displayable size
     def scale(self, ratio, absolute=False):
         if absolute:
-            self.image = self.initImage.resize((int(ratio*self.scaleRatio*self.initSize[0]), int(ratio*self.scaleRatio*self.initSize[1])), resample=Image.ANTIALIAS)
+            self.image = self.initImage.resize((int(ratio*self.scaleRatio*self.initImage.width), int(ratio*self.scaleRatio*self.initImage.height)), resample=Image.ANTIALIAS)
         else:
             self.image = self.initImage.resize((int(ratio*self.image.width), int(ratio*self.image.height)), resample=Image.ANTIALIAS)
 
@@ -42,15 +38,12 @@ class ArrangeWindow:
 
         self.window.protocol('WM_DELETE_WINDOW', self.close)
 
-        template = Image.open(template)
-        self.canvasBg = Displayable(template)
-        self.canvasSize = self.canvasBg.size
-        self.canvas = tk.Canvas(self.window, width=self.canvasSize[0], height=self.canvasSize[1], borderwidth=0, highlightthickness=0)
+        self.canvasCover = Displayable(template)
+        self.canvas = tk.Canvas(self.window, width=self.canvasCover.width, height=self.canvasCover.height, borderwidth=0, highlightthickness=0)
 
-        image = Image.open(image)
         self.image = Displayable(image)
         self.imagePhoto = self.image.getPhotoImage()
-        self.canvas_image = self.canvas.create_image(self.canvasSize[0], self.canvasSize[1], anchor=tk.SE, image=self.imagePhoto, tags='draggable')
+        self.canvas_image = self.canvas.create_image(self.canvasCover.width, self.canvasCover.height, anchor=tk.SE, image=self.imagePhoto, tags='draggable')
         self._drag_data = {'x': 0, 'y': 0, 'item': None}
         self.zoomAmount = 1
         self.canvas.bind('<ButtonPress-1>', self.on_drag_start)
@@ -58,8 +51,8 @@ class ArrangeWindow:
         self.canvas.bind('<B1-Motion>', self.on_drag_motion)
         self.canvas.bind('<MouseWheel>', self.zoom)
 
-        self.canvasBgPhoto = self.canvasBg.getPhotoImage()
-        self.canvas.create_image(self.canvasSize[0], self.canvasSize[1], anchor=tk.SE, image=self.canvasBgPhoto)
+        self.canvasCoverPhoto = self.canvasCover.getPhotoImage()
+        self.canvas.create_image(self.canvasCover.width, self.canvasCover.height, anchor=tk.SE, image=self.canvasCoverPhoto)
 
         self.rename = tk.Frame(bd=3, relief=tk.GROOVE, padx=10, pady=5)
         self.lab_rename = tk.Label(self.rename, text='Output filename:')
@@ -84,10 +77,10 @@ class ArrangeWindow:
         # snap to template lines if near them
         threshold = 10
         location = self.canvas.bbox(self._drag_data['item'])
-        if abs(location[2]-self.canvasSize[0]) < threshold:
-            self.canvas.move(self._drag_data['item'], -location[2]+self.canvasSize[0], 0)
-        if abs(location[3]-self.canvasSize[1]) < threshold:
-            self.canvas.move(self._drag_data['item'], 0, -location[3]+self.canvasSize[1])
+        if abs(location[2]-self.canvasCover.width) < threshold:
+            self.canvas.move(self._drag_data['item'], -location[2]+self.canvasCover.width, 0)
+        if abs(location[3]-self.canvasCover.height) < threshold:
+            self.canvas.move(self._drag_data['item'], 0, -location[3]+self.canvasCover.height)
         # reset the drag information
         self._drag_data['item'] = None
         self._drag_data['x'] = 0
@@ -126,7 +119,7 @@ class ArrangeWindow:
         self.filename.delete(0, tk.END)
         self.filename.insert(0, self.fName)
         # move image to bottom-right
-        self.canvas.coords(self.canvas_image, self.canvasSize[0], self.canvasSize[1])
+        self.canvas.coords(self.canvas_image, self.canvasCover.width, self.canvasCover.height)
         # reset zoom
         self.zoomAmount = 1
         self.image.scale(1, absolute=True)
@@ -141,8 +134,8 @@ class ArrangeWindow:
                 # FIXME: Use 4-tuple for crop values
                 'crop_left': -image_pos[0]/self.zoomAmount/self.image.size[0] if image_pos[0] < 0 else 0,
                 'crop_top': -image_pos[1]/self.zoomAmount/self.image.size[1] if image_pos[1] < 0 else 0,
-                'crop_right': (image_pos[2]-self.canvasSize[0])/self.zoomAmount/self.image.size[0] if image_pos[2] > self.canvasSize[0] else 0,
-                'crop_bottom': (image_pos[3]-self.canvasSize[1])/self.zoomAmount/self.image.size[1] if image_pos[3] > self.canvasSize[1] else 0,
+                'crop_right': (image_pos[2]-self.canvasCover.width)/self.zoomAmount/self.image.size[0] if image_pos[2] > self.canvasCover.width else 0,
+                'crop_bottom': (image_pos[3]-self.canvasCover.height)/self.zoomAmount/self.image.size[1] if image_pos[3] > self.canvasCover.height else 0,
             }
             self.window.destroy()
         else:
