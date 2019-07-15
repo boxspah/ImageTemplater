@@ -35,7 +35,7 @@ for infile in os.listdir('images'):
         pass
 
 if len(images) is 0:
-    raise Exception('No images found.')
+    raise FileNotFoundError('No images found.')
 
 for infile in os.listdir('templates'):
     try:
