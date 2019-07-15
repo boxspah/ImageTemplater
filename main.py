@@ -1,5 +1,6 @@
 import os
 from PIL import Image
+from PlatformSelect import PlatformSelect
 from ArrangeWindow import ArrangeWindow
 from Merge import merge
 import math
@@ -56,21 +57,18 @@ for infile in os.listdir('templates'):
         pass
 
 for im in images:
-    platform = None
-    print(f'Select a platform for {im}:')
-    while platform is None:
-        for i, p in enumerate(platform_list):
-            print(f'\t[{i}] {p}')
-        try: platform = platform_list[int(input())]
-        except IndexError: pass
+    print(f'Accessing {im}...')
+    pSelect = PlatformSelect(platform_list)
 
-    if len(templates[platform]) > 0:
-        for t in templates[platform]:
-            a = ArrangeWindow(t, im)
-            a.show()
-            merge(t, im, a.getMergeData(), a.getFilename())
-    else:
-        warnings.warn("No templates found for platform")
+    for platform, isSelected in pSelect.selectedPlatforms.items():
+        if len(templates[platform]) and isSelected.get():
+            print(f'Processing templates for {platform}...')
+            for t in templates[platform]:
+                a = ArrangeWindow(t, im)
+                a.show()
+                merge(t, im, a.getMergeData(), a.getFilename())
+        elif not len(templates[platform]):
+            warnings.warn(f'No templates found for {platform}')
 
 # TODO: Display message using GUI
 print("--- All images processed. ---")
