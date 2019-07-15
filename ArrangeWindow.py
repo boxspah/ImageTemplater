@@ -167,6 +167,3 @@ class ArrangeWindow:
             return self.fName
         else:
             return self.fName + '.png'
-
-    def getMergeData(self):
-        return self.mergeData

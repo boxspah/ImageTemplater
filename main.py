@@ -54,7 +54,7 @@ for im in images:
                 a = ArrangeWindow(t, im)
                 a.show()
                 try:
-                    merge(t, im, a.getMergeData(), a.getFilename())
+                    merge(t, im, a.mergeData, a.getFilename())
                 except AttributeError:
                     break
         elif not len(templates[platform]):
