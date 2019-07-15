@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.filedialog
+import tkinter.messagebox
 from PIL import Image, ImageTk
 import re
 import datetime
@@ -39,6 +40,8 @@ class ArrangeWindow:
         self.window = tk.Tk()
         self.window.title('Position the image in the template')
 
+        self.window.protocol('WM_DELETE_WINDOW', self.close)
+
         template = Image.open(template)
         self.canvasBg = Displayable(template)
         self.canvasSize = self.canvasBg.size
@@ -67,6 +70,10 @@ class ArrangeWindow:
         self.default = tk.Button(self.window, text='Default', command=self.default)
         self.confirm = tk.Button(self.window, text='Confirm', command=self.confirm)
     
+    def close(self):
+        if tkinter.messagebox.askokcancel("Quit", "Do you really want to quit? All previously edited images will be saved and the program will stop running."):
+            self.window.destroy()
+
     def on_drag_start(self, event):
         # record the item and its location
         self._drag_data['item'] = self.canvas.find_withtag('draggable')
