@@ -3,8 +3,8 @@ from PIL import Image
 from PlatformSelect import PlatformSelect
 from ArrangeWindow import ArrangeWindow
 from Merge import merge
-import math
 import warnings
+import tkinter.messagebox
 
 templates = {}
 images = []
@@ -22,6 +22,7 @@ for infile in os.listdir('images'):
         pass
 
 if len(images) is 0:
+    tkinter.messagebox.showerror('No images found', 'No images were found in the images/ directory.\nStopping the program.')
     raise FileNotFoundError('No images found.')
 
 for infile in os.listdir('templates'):
@@ -59,6 +60,8 @@ for im in images:
                     break
         elif not len(templates[platform]):
             warnings.warn(f'No templates found for {platform}')
+            if not tkinter.messagebox.askokcancel('No templates found', f'No templates were found in templates/ for {platform}. Press OK to continue processing other images, or press CANCEL to stop the program now.'):
+                raise SystemExit('User requested termination')
 
-# TODO: Display message using GUI
+tkinter.messagebox.showinfo('Templating finished', 'All images have been processed.')
 print("--- All images processed. ---")
