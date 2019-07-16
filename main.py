@@ -52,7 +52,6 @@ for im in images:
                 print(f'Processing templates for {platform}...')
                 for t in templates[platform]:
                     a = ArrangeWindow(t, im)
-                    a.show()
                     merge(t, im, a.mergeData, a.fName.get())
             else:
                 tempDisplay = tk.Tk()
