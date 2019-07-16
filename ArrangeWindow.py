@@ -64,6 +64,16 @@ class ArrangeWindow:
 
         self.default = tk.Button(self.window, text='Default', command=self.default)
         self.confirm = tk.Button(self.window, text='Confirm', command=self.confirm)
+
+        self.canvas.pack()
+        self.lab_rename.pack(side=tk.TOP)
+        self.filename.pack(side=tk.LEFT)
+        self.filesearch.pack(side=tk.RIGHT)
+        self.rename.pack()
+        self.default.pack()
+        self.confirm.pack()
+
+        self.window.mainloop()
     
     def close(self):
         if tkinter.messagebox.askokcancel("Quit", "Do you really want to quit? All previously edited images will be saved and the program will stop running."):
@@ -137,17 +147,6 @@ class ArrangeWindow:
             self.window.destroy()
         else:
             self.filename.config(bg='#ff8080')
-
-    def show(self):
-        self.canvas.pack()
-        self.lab_rename.pack(side=tk.TOP)
-        self.filename.pack(side=tk.LEFT)
-        self.filesearch.pack(side=tk.RIGHT)
-        self.rename.pack()
-        self.default.pack()
-        self.confirm.pack()
-
-        self.window.mainloop()
 
     def checkFilename(self, newValue):
         if re.match(r'^[a-zA-Z0-9 \-_\(\)\/]+\.[a-z]+', newValue):
