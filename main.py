@@ -1,7 +1,7 @@
 import os
 from PIL import Image
 from PlatformSelect import PlatformSelect
-from ArrangeWindow import ArrangeWindow
+from Editor import Editor
 from Merge import merge
 import warnings
 import tkinter as tk
@@ -59,7 +59,7 @@ for im in images:
                 print(f'Processing templates for {platform}...')
                 # create editor and write output to disk for every template
                 for t in templates[platform]:
-                    a = ArrangeWindow(t, im)
+                    a = Editor(t, im)
                     merge(t, im, a.mergeData, a.fName.get())
             else:
                 tempDisplay = tk.Tk()

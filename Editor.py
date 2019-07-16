@@ -32,7 +32,7 @@ class Displayable:
         else:
             self.image = self.initImage.resize((int(ratio*self.image.width), int(ratio*self.image.height)), resample=Image.ANTIALIAS)
 
-class ArrangeWindow:
+class Editor:
     def __init__(self, template, image):
         # create tkinter window
         self.window = tk.Tk()
