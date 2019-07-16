@@ -53,10 +53,7 @@ for im in images:
                 for t in templates[platform]:
                     a = ArrangeWindow(t, im)
                     a.show()
-                    try:
-                        merge(t, im, a.mergeData, a.getFilename())
-                    except AttributeError:
-                        break
+                    merge(t, im, a.mergeData, a.fName.get())
             else:
                 tempDisplay = tk.Tk()
                 warnings.warn(f'No templates found for {platform}')
