@@ -36,15 +36,16 @@ class ArrangeWindow:
     def __init__(self, template, image):
         # create tkinter window
         self.window = tk.Tk()
+        screen_dimensions = (self.window.winfo_screenwidth()*0.8, self.window.winfo_screenheight()*0.8)
         self.window.title('Position the image in the template')
 
         # handle window close event
         self.window.protocol('WM_DELETE_WINDOW', self.close)
 
         # create canvas elements
-        self.canvasCover = Displayable(template)
+        self.canvasCover = Displayable(template, screen_dimensions)
         self.canvas = tk.Canvas(self.window, width=self.canvasCover.width, height=self.canvasCover.height, borderwidth=0, highlightthickness=0)
-        self.image = Displayable(image)
+        self.image = Displayable(image, screen_dimensions)
         self.imagePhoto = self.image.getPhotoImage()
         self.canvas_image = self.canvas.create_image(self.canvasCover.width, self.canvasCover.height, anchor=tk.SE, image=self.imagePhoto, tags='draggable')
         self.canvasCoverPhoto = self.canvasCover.getPhotoImage()
