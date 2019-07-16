@@ -4,6 +4,7 @@ from PlatformSelect import PlatformSelect
 from ArrangeWindow import ArrangeWindow
 from Merge import merge
 import warnings
+import tkinter as tk
 import tkinter.messagebox
 
 templates = {}
@@ -59,9 +60,11 @@ for im in images:
                 except AttributeError:
                     break
         elif not len(templates[platform]):
+            tempDisplay = tk.Tk()
             warnings.warn(f'No templates found for {platform}')
             if not tkinter.messagebox.askokcancel('No templates found', f'No templates were found in templates/ for {platform}. Press OK to continue processing other images, or press CANCEL to stop the program now.'):
                 raise SystemExit('User requested termination')
+            tempDisplay.destroy()
 
 tkinter.messagebox.showinfo('Templating finished', 'All images have been processed.')
 print("--- All images processed. ---")
