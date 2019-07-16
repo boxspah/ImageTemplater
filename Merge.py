@@ -10,6 +10,6 @@ def merge(template, image, mergeData, savefile):
     # downsize template to fit image
     foreground.thumbnail(background.size, Image.ANTIALIAS)
 
-    # save combined image to file
+    # save combined image to disk
     background.paste(foreground, mask=foreground)
     background.save(savefile)

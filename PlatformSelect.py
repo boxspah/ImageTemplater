@@ -7,6 +7,7 @@ class PlatformSelect:
         self.window = tk.Tk()
         self.window.title('Select destination platform(s)')
 
+        # handle window close event
         self.window.protocol('WM_DELETE_WINDOW', self.close)
 
         # create dictionary to store checkbox values

@@ -10,9 +10,11 @@ import tkinter.messagebox
 templates = {}
 images = []
 platform_list = ['Instagram', 'Facebook', 'Twitter', 'Linkedin']
+# initialize empty array in dict key for each platform
 for p in platform_list:
     templates[p] = []
 
+# get filepaths of images in images/ directory
 for infile in os.listdir('images'):
     try:
         fpath = 'images/' + infile
@@ -26,6 +28,9 @@ if len(images) is 0:
     tkinter.messagebox.showerror('No images found', 'No images were found in the images/ directory.\nStopping the program.')
     raise FileNotFoundError('No images found.')
 
+# get filepaths of templates in templates/ directory
+# store filepaths in appropriate dict key list
+# a template can belong to MORE THAN ONE platform
 for infile in os.listdir('templates'):
     identified = False
     try:
@@ -42,14 +47,17 @@ for infile in os.listdir('templates'):
     except IOError:
         pass
 
+# process each image individually
 for im in images:
     print(f'Accessing {im}...')
+    # prompt user for destination platform
     pSelect = PlatformSelect(platform_list)
 
     for platform, isSelected in pSelect.selectedPlatforms.items():
         if isSelected.get():
             if len(templates[platform]):
                 print(f'Processing templates for {platform}...')
+                # create editor and write output to disk for every template
                 for t in templates[platform]:
                     a = ArrangeWindow(t, im)
                     merge(t, im, a.mergeData, a.fName.get())
