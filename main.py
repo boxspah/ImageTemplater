@@ -47,21 +47,22 @@ for im in images:
     pSelect = PlatformSelect(platform_list)
 
     for platform, isSelected in pSelect.selectedPlatforms.items():
-        if len(templates[platform]) and isSelected.get():
-            print(f'Processing templates for {platform}...')
-            for t in templates[platform]:
-                a = ArrangeWindow(t, im)
-                a.show()
-                try:
-                    merge(t, im, a.mergeData, a.getFilename())
-                except AttributeError:
-                    break
-        elif not len(templates[platform]):
-            tempDisplay = tk.Tk()
-            warnings.warn(f'No templates found for {platform}')
-            if not tkinter.messagebox.askokcancel('No templates found', f'No templates were found in templates/ for {platform}. Press OK to continue processing other images, or press CANCEL to stop the program now.'):
-                raise SystemExit('User requested termination')
-            tempDisplay.destroy()
+        if isSelected.get():
+            if len(templates[platform]):
+                print(f'Processing templates for {platform}...')
+                for t in templates[platform]:
+                    a = ArrangeWindow(t, im)
+                    a.show()
+                    try:
+                        merge(t, im, a.mergeData, a.getFilename())
+                    except AttributeError:
+                        break
+            else:
+                tempDisplay = tk.Tk()
+                warnings.warn(f'No templates found for {platform}')
+                if not tkinter.messagebox.askokcancel('No templates found', f'No templates were found in templates/ for {platform}. Press OK to continue processing other images, or press CANCEL to stop the program now.'):
+                    raise SystemExit('User requested termination')
+                tempDisplay.destroy()
 
 tkinter.messagebox.showinfo('Templating finished', 'All images have been processed.')
 print("--- All images processed. ---")
