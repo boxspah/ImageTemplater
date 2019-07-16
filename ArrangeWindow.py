@@ -15,7 +15,7 @@ class Displayable:
         self.image.thumbnail(maxDimensions, Image.ANTIALIAS)
         self.size = self.image.size
         self.width, self.height = self.size
-        self.scaleRatio = self.size[0]/self.initImage.width
+        self.scaleRatio = self.width/self.initImage.width
 
     # returns a PhotoImage of image for use with tkinter
     def getPhotoImage(self):
@@ -132,11 +132,10 @@ class ArrangeWindow:
             self.fName = self.filename.get()
             image_pos = self.canvas.bbox(self.canvas_image)
             self.mergeData = {
-                # FIXME: Use 4-tuple for crop values
-                'crop_left': -image_pos[0]/self.zoomAmount/self.image.size[0] if image_pos[0] < 0 else 0,
-                'crop_top': -image_pos[1]/self.zoomAmount/self.image.size[1] if image_pos[1] < 0 else 0,
-                'crop_right': (image_pos[2]-self.canvasCover.width)/self.zoomAmount/self.image.size[0] if image_pos[2] > self.canvasCover.width else 0,
-                'crop_bottom': (image_pos[3]-self.canvasCover.height)/self.zoomAmount/self.image.size[1] if image_pos[3] > self.canvasCover.height else 0,
+                'crop_left': -image_pos[0]/self.zoomAmount/self.image.width if image_pos[0] < 0 else 0,
+                'crop_top': -image_pos[1]/self.zoomAmount/self.image.height if image_pos[1] < 0 else 0,
+                'crop_right': (image_pos[2]-self.canvasCover.width)/self.zoomAmount/self.image.width if image_pos[2] > self.canvasCover.width else 0,
+                'crop_bottom': (image_pos[3]-self.canvasCover.height)/self.zoomAmount/self.image.height if image_pos[3] > self.canvasCover.height else 0,
             }
             self.window.destroy()
         else:
