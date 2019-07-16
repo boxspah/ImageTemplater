@@ -8,3 +8,9 @@ templates/*
 out/*
 # except the help file
 !*/about.txt
+
+# ignore build files
+build
+dist
+main.spec
+*.exe
