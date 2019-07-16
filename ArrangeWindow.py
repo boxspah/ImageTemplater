@@ -56,9 +56,11 @@ class ArrangeWindow:
 
         self.rename = tk.Frame(bd=3, relief=tk.GROOVE, padx=10, pady=5)
         self.lab_rename = tk.Label(self.rename, text='Output filename:')
-        self.filename = tk.Entry(self.rename, width=70)
+        # default filename
+        self.fName = tk.StringVar(value='out/' + datetime.datetime.now().strftime('%Y-%m-%d %H%M%S') + '.png')
+        vcmd = (self.rename.register(self.checkFilename), '%P')
+        self.filename = tk.Entry(self.rename, width=70, textvariable=self.fName, validate=tk.ALL, validatecommand=vcmd)
         self.filesearch = tk.Button(self.rename, text='Browse', command=self.browseFiles)
-        self.fName = ''
 
         self.default = tk.Button(self.window, text='Default', command=self.default)
         self.confirm = tk.Button(self.window, text='Confirm', command=self.confirm)
@@ -109,16 +111,12 @@ class ArrangeWindow:
         self.canvas.itemconfig(self.canvas_image, image=self.imagePhoto)
 
     def browseFiles(self):
-        tempName = tk.filedialog.asksaveasfilename(title="Select a location to save to:", filetypes=(('PNG', '*.png'), ('All files', '*.*')))
+        tempName = tk.filedialog.asksaveasfilename(title="Select a location to save to:", defaultextension='.*', filetypes=(('PNG', '*.png'), ('All files', '*.*')))
         if len(tempName) > 0:
-            self.fName = tempName
-            self.filename.delete(0, tk.END)
-            self.filename.insert(0, self.fName)
+            self.fName.set(tempName)
 
     def default(self):
-        self.fName = 'out/' + datetime.datetime.now().strftime('%Y-%m-%d %H%M%S') + '.png'
-        self.filename.delete(0, tk.END)
-        self.filename.insert(0, self.fName)
+        self.fName.set('out/' + datetime.datetime.now().strftime('%Y-%m-%d %H%M%S') + '.png')
         # move image to bottom-right
         self.canvas.coords(self.canvas_image, self.canvasCover.width, self.canvasCover.height)
         # reset zoom
@@ -128,8 +126,7 @@ class ArrangeWindow:
         self.canvas.itemconfig(self.canvas_image, image=self.imagePhoto)
 
     def confirm(self):
-        if len(self.filename.get()):
-            self.fName = self.filename.get()
+        if len(self.fName.get()):
             image_pos = self.canvas.bbox(self.canvas_image)
             self.mergeData = {
                 'crop_left': -image_pos[0]/self.zoomAmount/self.image.width if image_pos[0] < 0 else 0,
@@ -145,7 +142,6 @@ class ArrangeWindow:
         self.canvas.pack()
         self.lab_rename.pack(side=tk.TOP)
         self.filename.pack(side=tk.LEFT)
-        self.filename.insert(0, 'out/' + datetime.datetime.now().strftime('%Y-%m-%d %H%M%S') + '.png')    # default filename
         self.filesearch.pack(side=tk.RIGHT)
         self.rename.pack()
         self.default.pack()
@@ -153,9 +149,7 @@ class ArrangeWindow:
 
         self.window.mainloop()
 
-    def getFilename(self):
-        name = self.fName
-        if re.match(r'^[a-zA-Z0-9 \-_\(\)\/]+\.png$', name):
-            return self.fName
-        else:
-            return self.fName + '.png'
+    def checkFilename(self, newValue):
+        if re.match(r'^[a-zA-Z0-9 \-_\(\)\/]+\.[a-z]+', newValue):
+            return True
+        return False
