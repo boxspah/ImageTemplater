@@ -36,7 +36,7 @@ class ArrangeWindow:
     def __init__(self, template, image):
         # create tkinter window
         self.window = tk.Tk()
-        screen_dimensions = (self.window.winfo_screenwidth()*0.8, self.window.winfo_screenheight()*0.8)
+        screen_dimensions = (self.window.winfo_screenwidth()*0.7, self.window.winfo_screenheight()*0.7)
         self.window.title('Position the image in the template')
 
         # handle window close event
