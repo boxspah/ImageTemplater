@@ -27,20 +27,17 @@ if len(images) is 0:
     raise FileNotFoundError('No images found.')
 
 for infile in os.listdir('templates'):
+    identified = False
     try:
         fpath = 'templates/' + infile
         with Image.open(fpath) as im:
             print('Found template:', infile, im.format, "%dx%d" % im.size, im.mode)
-            # FIXME: Optimize platform categorization
-            if("instagram" in infile.lower()):
-                templates['Instagram'].append(fpath)
-            elif("facebook" in infile.lower()):
-                templates['Facebook'].append(fpath)
-            elif("linkedin" in infile):
-                templates['Linkedin'].append(fpath)
-            elif("twitter" in infile):
-                templates['Twitter'].append(fpath)
-            else:
+            lower_infile = infile.lower()
+            for p in platform_list:
+                if p.lower() in lower_infile:
+                    templates[p].append(fpath)
+                    identified = True
+            if not identified:
                 warnings.warn("Could not detect platform from filename for " + infile)
     except IOError:
         pass
