@@ -7,6 +7,8 @@ class PlatformSelect:
         self.window = tk.Tk()
         self.window.title('Select destination platform(s)')
 
+        self.window.protocol('WM_DELETE_WINDOW', self.close)
+
         # create dictionary to store checkbox values
         self.selectedPlatforms = {}
         for p in pList:
@@ -23,6 +25,11 @@ class PlatformSelect:
         self.c.pack()
 
         self.window.mainloop()
+
+    def close(self):
+        if tkinter.messagebox.askokcancel("Quit", "Do you really want to quit?"):
+            self.window.destroy()
+            raise SystemExit('User requested termination')
 
     def confirm(self):
         sel_array = [y.get() for x, y in self.selectedPlatforms.items()]
