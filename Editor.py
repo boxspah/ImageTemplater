@@ -57,8 +57,11 @@ class Editor:
         self.canvas.bind('<ButtonRelease-1>', self.on_drag_release)
         self.canvas.bind('<B1-Motion>', self.on_drag_motion)
         # setup scroll-to-zoom
-        self.zoomAmount = 1
-        self.canvas.bind('<MouseWheel>', self.zoom)
+        self.zoomAmount = 1.0
+        self.canvas.bind('<MouseWheel>', self.scrollZoom)
+        # create slider to adjust zoomAmount
+        self.zoomSlider = tk.Scale(self.editDisplay, label='Zoom', showvalue=1, length=0.8*self.canvasCover.width, from_=0.5, to=5, resolution=0.025, tickinterval=0.25, orient=tk.HORIZONTAL, command=self.sliderZoom)
+        self.zoomSlider.set(1.0)
 
         # create filename field and buttons
         self.rename = tk.Frame(bd=3, relief=tk.GROOVE, padx=10, pady=5)
@@ -73,6 +76,7 @@ class Editor:
 
         # position and display all window elements
         self.canvas.pack()
+        self.zoomSlider.pack()
         self.editDisplay.pack()
         self.lab_rename.pack(side=tk.TOP)
         self.filename.pack(side=tk.LEFT)
@@ -125,13 +129,22 @@ class Editor:
         self._drag_data['x'] = event.x
         self._drag_data['y'] = event.y
 
-    def zoom(self, e):
+    def sliderZoom(self, e):
+        self.zoomAmount = float(e)
+        # resize and update canvas image accordingly
+        self.image.scale(self.zoomAmount, absolute=True)
+        self.imagePhoto = self.image.getPhotoImage()
+        self.canvas.itemconfig(self.canvas_image, image=self.imagePhoto)
+
+    def scrollZoom(self, e):
         # scroll down
         if e.num == 5 or e.delta == -120:
             self.zoomAmount -= 0.05
         # scroll up
         if e.num == 4 or e.delta == 120:
             self.zoomAmount += 0.05
+        # update slider
+        self.zoomSlider.set(self.zoomAmount)
         # resize and update canvas image accordingly
         self.image.scale(self.zoomAmount, absolute=True)
         self.imagePhoto = self.image.getPhotoImage()
@@ -148,7 +161,8 @@ class Editor:
         # move image to bottom-right
         self.canvas.coords(self.canvas_image, self.canvasCover.width, self.canvasCover.height)
         # reset zoom and update canvas image
-        self.zoomAmount = 1
+        self.zoomAmount = 1.0
+        self.zoomSlider.set(1.0)
         self.image.scale(1, absolute=True)
         self.imagePhoto = self.image.getPhotoImage()
         self.canvas.itemconfig(self.canvas_image, image=self.imagePhoto)
