@@ -43,8 +43,9 @@ class Editor:
         self.window.protocol('WM_DELETE_WINDOW', self.close)
 
         # create canvas elements
+        self.editDisplay = tk.Frame()
         self.canvasCover = Displayable(template, screen_dimensions)
-        self.canvas = tk.Canvas(self.window, width=self.canvasCover.width, height=self.canvasCover.height, borderwidth=0, highlightthickness=0)
+        self.canvas = tk.Canvas(self.editDisplay, width=self.canvasCover.width, height=self.canvasCover.height, borderwidth=0, highlightthickness=0)
         self.image = Displayable(image, screen_dimensions)
         self.imagePhoto = self.image.getPhotoImage()
         self.canvas_image = self.canvas.create_image(self.canvasCover.width, self.canvasCover.height, anchor=tk.SE, image=self.imagePhoto, tags='draggable')
@@ -73,6 +74,7 @@ class Editor:
 
         # position and display all window elements
         self.canvas.pack()
+        self.editDisplay.pack()
         self.lab_rename.pack(side=tk.TOP)
         self.filename.pack(side=tk.LEFT)
         self.filesearch.pack(side=tk.RIGHT)
