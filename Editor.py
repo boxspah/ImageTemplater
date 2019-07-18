@@ -149,9 +149,6 @@ class Editor:
     def confirm(self):
         if len(self.fName.get()):
             image_pos = self.canvas.bbox(self.canvas_image)
-            if image_pos[0] > 0 or image_pos[1] > 0 or image_pos[2] < self.canvasCover.width or image_pos[3] < self.canvasCover.height:
-                tkinter.messagebox.showwarning('Invalid image position', 'The image must be at least as big as the template and it must fill the entire template.')
-                return
             # stores percentage of image not visible on each side
             self.mergeData = {
                 'crop_left': -image_pos[0]/self.zoomAmount/self.image.width if image_pos[0] < 0 else 0,
