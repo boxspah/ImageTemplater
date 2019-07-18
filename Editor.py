@@ -12,7 +12,7 @@ class Displayable:
         self.initImage = Image.open(image)
 
         self.image = self.initImage.copy()
-        self.image.thumbnail(maxDimensions, Image.ANTIALIAS)
+        self.image.thumbnail(maxDimensions, Image.LANCZOS)
         self.size = self.image.size
         self.width, self.height = self.size
         self.scaleRatio = self.width/self.initImage.width
@@ -28,9 +28,9 @@ class Displayable:
     # absolute=True forces scaling relative to original Displayable size (no deceleration)
     def scale(self, ratio, absolute=False):
         if absolute:
-            self.image = self.initImage.resize((int(ratio*self.scaleRatio*self.initImage.width), int(ratio*self.scaleRatio*self.initImage.height)), resample=Image.ANTIALIAS)
+            self.image = self.initImage.resize((int(ratio*self.scaleRatio*self.initImage.width), int(ratio*self.scaleRatio*self.initImage.height)), resample=Image.LANCZOS)
         else:
-            self.image = self.initImage.resize((int(ratio*self.image.width), int(ratio*self.image.height)), resample=Image.ANTIALIAS)
+            self.image = self.initImage.resize((int(ratio*self.image.width), int(ratio*self.image.height)), resample=Image.LANCZOS)
 
 class Editor:
     def __init__(self, template, image):
