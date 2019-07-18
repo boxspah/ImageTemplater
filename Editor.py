@@ -149,13 +149,17 @@ class Editor:
     def confirm(self):
         if len(self.fName.get()):
             image_pos = self.canvas.bbox(self.canvas_image)
-            # stores percentage of image not visible on each side
             self.mergeData = {
+                # ratio to maintain canvas size ratios for actual images
                 'magic_ratio': self.canvasCover.scaleRatio/self.image.scaleRatio/self.zoomAmount,
-                'crop_left': -image_pos[0]/self.zoomAmount/self.image.width if image_pos[0] < 0 else 0,
-                'crop_top': -image_pos[1]/self.zoomAmount/self.image.height if image_pos[1] < 0 else 0,
-                'crop_right': (image_pos[2]-self.canvasCover.width)/self.zoomAmount/self.image.width if image_pos[2] > self.canvasCover.width else 0,
-                'crop_bottom': (image_pos[3]-self.canvasCover.height)/self.zoomAmount/self.image.height if image_pos[3] > self.canvasCover.height else 0,
+                # horizontal and vertical offset from canvas edge (in % of canvas dimensions)
+                'offset': (image_pos[0]/self.canvasCover.width if image_pos[0] > 0 else 0,
+                           image_pos[1]/self.canvasCover.height if image_pos[1] > 0 else 0),
+                # amount of image cut off by canvas (in % of image dimensions)
+                'crop': (-image_pos[0]/self.zoomAmount/self.image.width if image_pos[0] < 0 else 0,
+                        -image_pos[1]/self.zoomAmount/self.image.height if image_pos[1] < 0 else 0,
+                        (image_pos[2]-self.canvasCover.width)/self.zoomAmount/self.image.width if image_pos[2] > self.canvasCover.width else 0,
+                        (image_pos[3]-self.canvasCover.height)/self.zoomAmount/self.image.height if image_pos[3] > self.canvasCover.height else 0),
             }
             self.window.destroy()
         else:
