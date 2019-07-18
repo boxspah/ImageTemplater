@@ -57,11 +57,13 @@ class Editor:
         self.canvas.bind('<ButtonRelease-1>', self.on_drag_release)
         self.canvas.bind('<B1-Motion>', self.on_drag_motion)
         # setup scroll-to-zoom
-        self.zoomAmount = 1.0
+        self.zoomAmount = tk.DoubleVar(value=1.0)
         self.canvas.bind('<MouseWheel>', self.scrollZoom)
         # create slider to adjust zoomAmount
         self.zoomSlider = tk.Scale(self.editDisplay, label='Zoom', showvalue=1, length=0.8*self.canvasCover.width, from_=0.5, to=5, resolution=0.025, tickinterval=0.25, orient=tk.HORIZONTAL, command=self.sliderZoom)
         self.zoomSlider.set(1.0)
+        # associated Entry widget to set zoomAmount
+        self.zoomEntry = tk.Entry(self.editDisplay, width=5, textvariable=self.zoomAmount, state='readonly')
 
         # create filename field and buttons
         self.rename = tk.Frame(bd=3, relief=tk.GROOVE, padx=10, pady=5)
@@ -76,7 +78,8 @@ class Editor:
 
         # position and display all window elements
         self.canvas.pack()
-        self.zoomSlider.pack()
+        self.zoomSlider.pack(side=tk.LEFT)
+        self.zoomEntry.pack(side=tk.RIGHT)
         self.editDisplay.pack()
         self.lab_rename.pack(side=tk.TOP)
         self.filename.pack(side=tk.LEFT)
@@ -130,23 +133,23 @@ class Editor:
         self._drag_data['y'] = event.y
 
     def sliderZoom(self, e):
-        self.zoomAmount = float(e)
+        self.zoomAmount.set(float(e))
         # resize and update canvas image accordingly
-        self.image.scale(self.zoomAmount, absolute=True)
+        self.image.scale(float(e), absolute=True)
         self.imagePhoto = self.image.getPhotoImage()
         self.canvas.itemconfig(self.canvas_image, image=self.imagePhoto)
 
     def scrollZoom(self, e):
         # scroll down
         if e.num == 5 or e.delta == -120:
-            self.zoomAmount -= 0.05
+            self.zoomAmount.set(self.zoomAmount.get()-0.05)
         # scroll up
         if e.num == 4 or e.delta == 120:
-            self.zoomAmount += 0.05
+            self.zoomAmount.set(self.zoomAmount.get()+0.05)
         # update slider
-        self.zoomSlider.set(self.zoomAmount)
+        self.zoomSlider.set(self.zoomAmount.get())
         # resize and update canvas image accordingly
-        self.image.scale(self.zoomAmount, absolute=True)
+        self.image.scale(self.zoomAmount.get(), absolute=True)
         self.imagePhoto = self.image.getPhotoImage()
         self.canvas.itemconfig(self.canvas_image, image=self.imagePhoto)
 
@@ -161,7 +164,7 @@ class Editor:
         # move image to bottom-right
         self.canvas.coords(self.canvas_image, self.canvasCover.width, self.canvasCover.height)
         # reset zoom and update canvas image
-        self.zoomAmount = 1.0
+        self.zoomAmount.set(1.0)
         self.zoomSlider.set(1.0)
         self.image.scale(1, absolute=True)
         self.imagePhoto = self.image.getPhotoImage()
@@ -170,17 +173,18 @@ class Editor:
     def confirm(self):
         if re.match(r'^[^<>:;,?"*|\/]+\.[a-z]{3,}$', self.fName.get()):
             image_pos = self.canvas.bbox(self.canvas_image)
+            zoomAmount = self.zoomAmount.get()
             self.mergeData = {
                 # ratio to maintain canvas size ratios for actual images
-                'magic_ratio': self.canvasCover.scaleRatio/self.image.scaleRatio/self.zoomAmount,
+                'magic_ratio': self.canvasCover.scaleRatio/self.image.scaleRatio/zoomAmount,
                 # horizontal and vertical offset from canvas edge (in % of canvas dimensions)
                 'offset': (image_pos[0]/self.canvasCover.width if image_pos[0] > 0 else 0,
                            image_pos[1]/self.canvasCover.height if image_pos[1] > 0 else 0),
                 # amount of image cut off by canvas (in % of image dimensions)
-                'crop': (-image_pos[0]/self.zoomAmount/self.image.width if image_pos[0] < 0 else 0,
-                        -image_pos[1]/self.zoomAmount/self.image.height if image_pos[1] < 0 else 0,
-                        (image_pos[2]-self.canvasCover.width)/self.zoomAmount/self.image.width if image_pos[2] > self.canvasCover.width else 0,
-                        (image_pos[3]-self.canvasCover.height)/self.zoomAmount/self.image.height if image_pos[3] > self.canvasCover.height else 0),
+                'crop': (-image_pos[0]/zoomAmount/self.image.width if image_pos[0] < 0 else 0,
+                        -image_pos[1]/zoomAmount/self.image.height if image_pos[1] < 0 else 0,
+                        (image_pos[2]-self.canvasCover.width)/zoomAmount/self.image.width if image_pos[2] > self.canvasCover.width else 0,
+                        (image_pos[3]-self.canvasCover.height)/zoomAmount/self.image.height if image_pos[3] > self.canvasCover.height else 0),
             }
             self.window.destroy()
         else:
