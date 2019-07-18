@@ -8,7 +8,7 @@ def merge(template, image, mergeData, savefile):
     background = background.crop(box=(background.width*mergeData['crop_left'], background.height*mergeData['crop_top'], background.width*(1-mergeData['crop_right']), background.height*(1-mergeData['crop_bottom'])))
 
     # downsize template to fit image
-    foreground.thumbnail(background.size, Image.ANTIALIAS)
+    foreground.thumbnail(background.size, Image.LANCZOS)
 
     # save combined image to disk
     background.paste(foreground, mask=foreground)
