@@ -64,8 +64,7 @@ class Editor:
         self.rename = tk.Frame(bd=3, relief=tk.GROOVE, padx=10, pady=5)
         self.lab_rename = tk.Label(self.rename, text='Output filename:')
         self.fName = tk.StringVar(value='out/' + datetime.datetime.now().strftime('%Y-%m-%d %H%M%S') + '.png')  # set default filename
-        vcmd = (self.rename.register(self.checkFilename), '%P')
-        self.filename = tk.Entry(self.rename, width=70, textvariable=self.fName, validate=tk.ALL, validatecommand=vcmd)
+        self.filename = tk.Entry(self.rename, width=70, textvariable=self.fName)
         self.filesearch = tk.Button(self.rename, text='Browse', command=self.browseFiles)
 
         # create bottom buttons
@@ -155,7 +154,7 @@ class Editor:
         self.canvas.itemconfig(self.canvas_image, image=self.imagePhoto)
 
     def confirm(self):
-        if len(self.fName.get()):
+        if re.match(r'^[^<>:;,?"*|\/]+\.[a-z]{3,}$', self.fName.get()):
             image_pos = self.canvas.bbox(self.canvas_image)
             self.mergeData = {
                 # ratio to maintain canvas size ratios for actual images
@@ -171,10 +170,5 @@ class Editor:
             }
             self.window.destroy()
         else:
+            tkinter.messagebox.showwarning('Invalid filename', 'The provided filename is not valid.')
             self.filename.config(bg='#ff8080')
-
-    def checkFilename(self, newValue):
-        # ensure valid filepath using regex pattern
-        if re.match(r'^[a-zA-Z0-9 \-_\(\)\/]+\.[a-z]+', newValue):
-            return True
-        return False
