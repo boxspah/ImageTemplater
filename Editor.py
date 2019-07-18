@@ -96,13 +96,21 @@ class Editor:
         self._drag_data['y'] = event.y
 
     def on_drag_release(self, event):
-        # snap to template lines if within {threshold} pixels of them
+        # snap to canvas boundaries if within {threshold} pixels of them
         threshold = 10
         location = self.canvas.bbox(self._drag_data['item'])
+        # right border
         if abs(location[2]-self.canvasCover.width) < threshold:
             self.canvas.move(self._drag_data['item'], -location[2]+self.canvasCover.width, 0)
+        # left border
+        elif abs(location[0]) < threshold:
+            self.canvas.move(self._drag_data['item'], -location[0], 0)
+        # bottom border
         if abs(location[3]-self.canvasCover.height) < threshold:
             self.canvas.move(self._drag_data['item'], 0, -location[3]+self.canvasCover.height)
+        # top border
+        elif abs(location[1]) < threshold:
+            self.canvas.move(self._drag_data['item'], 0, -location[1])
         # reset the drag information
         self._drag_data['item'] = None
         self._drag_data['x'] = 0
