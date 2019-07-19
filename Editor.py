@@ -27,10 +27,8 @@ class Displayable:
     #
     # absolute=True forces scaling relative to original Displayable size (no deceleration)
     def scale(self, ratio, absolute=False):
-        if absolute:
-            self.image = self.initImage.resize((int(ratio*self.scaleRatio*self.initImage.width), int(ratio*self.scaleRatio*self.initImage.height)), resample=Image.LANCZOS)
-        else:
-            self.image = self.initImage.resize((int(ratio*self.image.width), int(ratio*self.image.height)), resample=Image.LANCZOS)
+        new_dimensions = tuple((int(ratio*self.scaleRatio*x) for x in self.initImage.size) if absolute else (int(ratio*x) for x in self.image.size))
+        self.image = self.initImage.resize(new_dimensions, resample=Image.LANCZOS)
 
 class Editor:
     def __init__(self, template, image):
