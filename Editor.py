@@ -69,13 +69,13 @@ class Editor:
         self.zoomAmount = tk.DoubleVar(value=1.0)
         self.canvas.bind('<MouseWheel>', self.scrollZoom)
         # create slider to adjust zoomAmount
-        self.zoomSlider = tk.Scale(editDisplay, label='Zoom', showvalue=1, length=0.8*self.canvasCover.width, from_=0.5, to=5, resolution=0.025, tickinterval=0.25, orient=tk.HORIZONTAL, command=self.sliderZoom)
+        self.zoomSlider = tk.Scale(editDisplay, label='Zoom', showvalue=True, length=0.8*self.canvasCover.width, from_=0.5, to=5, resolution=0.025, tickinterval=0.25, orient=tk.HORIZONTAL, command=self.sliderZoom)
         self.zoomSlider.set(1.0)
-        self.zoomSlider.pack(side=tk.LEFT)
+        self.zoomSlider.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5)
         # associated Entry widget to display zoomAmount
-        zoomEntry = tk.Entry(editDisplay, width=5, textvariable=self.zoomAmount, state='readonly')
-        zoomEntry.pack(side=tk.RIGHT)
-        editDisplay.pack()
+        zoomEntry = tk.Entry(editDisplay, width=5, justify=tk.CENTER, textvariable=self.zoomAmount, state='readonly')
+        zoomEntry.pack(side=tk.RIGHT, fill=tk.X, padx=5)
+        editDisplay.pack(fill=tk.BOTH, expand=True)
 
         # create filename field and buttons
         rename = tk.Frame(bd=3, relief=tk.GROOVE, padx=10, pady=5)
@@ -84,16 +84,19 @@ class Editor:
         self.filename = tk.Entry(rename, width=70, textvariable=self.fName)
         filesearch = tk.Button(rename, text='Browse', command=self.browseFiles)
         lab_rename.pack(side=tk.TOP)
-        self.filename.pack(side=tk.LEFT)
+        self.filename.pack(side=tk.LEFT, fill=tk.X, expand=True)
         filesearch.pack(side=tk.RIGHT)
-        rename.pack()
+        rename.pack(fill=tk.BOTH, expand=True)
 
         # create bottom buttons
-        self.default = tk.Button(self.window, text='Default', command=self.default)
-        self.confirm = tk.Button(self.window, text='Confirm', command=self.confirm)
-        self.default.pack()
-        self.confirm.pack()
+        self.default = tk.Button(self.window, text='Default', pady=5, command=self.default)
+        self.confirm = tk.Button(self.window, text='Confirm', pady=5, command=self.confirm)
+        self.default.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.confirm.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
+        # set minimum window size
+        self.window.update()
+        self.window.minsize(self.window.winfo_width(), self.window.winfo_height())
         self.window.mainloop()
 
     def close(self):
