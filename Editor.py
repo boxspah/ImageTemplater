@@ -51,14 +51,15 @@ class Editor:
         current_file.pack(pady=5)
 
         # create canvas elements
-        self.editDisplay = tk.Frame()
+        editDisplay = tk.Frame()
         self.canvasCover = Displayable(template, screen_dimensions)
-        self.canvas = tk.Canvas(self.editDisplay, width=self.canvasCover.width, height=self.canvasCover.height, borderwidth=0, highlightthickness=0)
+        self.canvas = tk.Canvas(editDisplay, width=self.canvasCover.width, height=self.canvasCover.height, borderwidth=0, highlightthickness=0)
         self.image = Displayable(image, screen_dimensions)
         self.imagePhoto = self.image.getPhotoImage()
         self.canvas_image = self.canvas.create_image(self.canvasCover.width, self.canvasCover.height, anchor=tk.SE, image=self.imagePhoto, tags='draggable')
         self.canvasCoverPhoto = self.canvasCover.getPhotoImage()
         self.canvas.create_image(self.canvasCover.width, self.canvasCover.height, anchor=tk.SE, image=self.canvasCoverPhoto)
+        self.canvas.pack()
         # setup drag and drop
         self._drag_data = {'x': 0, 'y': 0, 'item': None}
         self.canvas.bind('<ButtonPress-1>', self.on_drag_start)
@@ -68,31 +69,28 @@ class Editor:
         self.zoomAmount = tk.DoubleVar(value=1.0)
         self.canvas.bind('<MouseWheel>', self.scrollZoom)
         # create slider to adjust zoomAmount
-        self.zoomSlider = tk.Scale(self.editDisplay, label='Zoom', showvalue=1, length=0.8*self.canvasCover.width, from_=0.5, to=5, resolution=0.025, tickinterval=0.25, orient=tk.HORIZONTAL, command=self.sliderZoom)
+        self.zoomSlider = tk.Scale(editDisplay, label='Zoom', showvalue=1, length=0.8*self.canvasCover.width, from_=0.5, to=5, resolution=0.025, tickinterval=0.25, orient=tk.HORIZONTAL, command=self.sliderZoom)
         self.zoomSlider.set(1.0)
-        # associated Entry widget to set zoomAmount
-        self.zoomEntry = tk.Entry(self.editDisplay, width=5, textvariable=self.zoomAmount, state='readonly')
+        self.zoomSlider.pack(side=tk.LEFT)
+        # associated Entry widget to display zoomAmount
+        zoomEntry = tk.Entry(editDisplay, width=5, textvariable=self.zoomAmount, state='readonly')
+        zoomEntry.pack(side=tk.RIGHT)
+        editDisplay.pack()
 
         # create filename field and buttons
-        self.rename = tk.Frame(bd=3, relief=tk.GROOVE, padx=10, pady=5)
-        self.lab_rename = tk.Label(self.rename, text='Output filename:')
+        rename = tk.Frame(bd=3, relief=tk.GROOVE, padx=10, pady=5)
+        lab_rename = tk.Label(rename, text='Output filename:')
         self.fName = tk.StringVar(value='out/' + datetime.datetime.now().strftime('%Y-%m-%d %H%M%S') + '.png')  # set default filename
-        self.filename = tk.Entry(self.rename, width=70, textvariable=self.fName)
-        self.filesearch = tk.Button(self.rename, text='Browse', command=self.browseFiles)
+        self.filename = tk.Entry(rename, width=70, textvariable=self.fName)
+        filesearch = tk.Button(rename, text='Browse', command=self.browseFiles)
+        lab_rename.pack(side=tk.TOP)
+        self.filename.pack(side=tk.LEFT)
+        filesearch.pack(side=tk.RIGHT)
+        rename.pack()
 
         # create bottom buttons
         self.default = tk.Button(self.window, text='Default', command=self.default)
         self.confirm = tk.Button(self.window, text='Confirm', command=self.confirm)
-
-        # position and display all window elements
-        self.canvas.pack()
-        self.zoomSlider.pack(side=tk.LEFT)
-        self.zoomEntry.pack(side=tk.RIGHT)
-        self.editDisplay.pack()
-        self.lab_rename.pack(side=tk.TOP)
-        self.filename.pack(side=tk.LEFT)
-        self.filesearch.pack(side=tk.RIGHT)
-        self.rename.pack()
         self.default.pack()
         self.confirm.pack()
 
