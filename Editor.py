@@ -179,7 +179,7 @@ class Editor:
         self.canvas.itemconfig(self.canvas_image, image=self.imagePhoto)
 
     def confirm(self):
-        if re.match(r'^[^<>:;,?"*|\/]+\.[a-z]{3,}$', self.fName.get()):
+        if re.match(r'^[^<>:;,?"*|]+\.[a-z]{3,}$', self.fName.get()):
             image_pos = self.canvas.bbox(self.canvas_image)
             zoomAmount = self.zoomAmount.get()
             self.mergeData = {
