@@ -80,17 +80,20 @@ class Editor:
         lab_rename = tk.Label(rename, text='Output filename:')
         self.fName = tk.StringVar(value='out/' + datetime.datetime.now().strftime('%Y-%m-%d %H%M%S') + '.png')  # set default filename
         self.filename = tk.Entry(rename, width=70, textvariable=self.fName)
-        filesearch = tk.Button(rename, text='Browse', command=self.browseFiles)
+        filesearch = tk.Button(rename, text='Browse', underline=0, command=self.browseFiles)
+        self.window.bind_all('b', self.browseFiles)
         lab_rename.pack(side=tk.TOP)
         self.filename.pack(side=tk.LEFT, fill=tk.X, expand=True)
         filesearch.pack(side=tk.RIGHT)
         rename.pack(fill=tk.BOTH, expand=True)
 
         # create bottom buttons
-        self.default = tk.Button(self.window, text='Default', pady=5, command=self.default)
-        self.confirm = tk.Button(self.window, text='Confirm', pady=5, command=self.confirm)
-        self.default.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        self.confirm.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        default = tk.Button(self.window, text='Default', underline=0, pady=5, command=self.set_default)
+        self.window.bind_all('d', self.set_default)
+        confirm = tk.Button(self.window, text='Confirm', pady=5, command=self.confirm)
+        self.window.bind_all('<Return>', self.confirm)
+        default.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        confirm.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
         # set minimum window size
         self.window.update()
@@ -160,12 +163,12 @@ class Editor:
         self.imagePhoto = self.image.getPhotoImage()
         self.canvas.itemconfig(self.canvas_image, image=self.imagePhoto)
 
-    def browseFiles(self):
+    def browseFiles(self, key_event=None):
         tempName = tk.filedialog.asksaveasfilename(title="Select a location to save to:", defaultextension='.*', filetypes=(('PNG', '*.png'), ('All files', '*.*')))
         if len(tempName) > 0:
             self.fName.set(tempName)
 
-    def default(self):
+    def set_default(self, key_event=None):
         # set filename to current timestamp
         self.fName.set('out/' + datetime.datetime.now().strftime('%Y-%m-%d %H%M%S') + '.png')
         # move image to bottom-right
@@ -177,7 +180,7 @@ class Editor:
         self.imagePhoto = self.image.getPhotoImage()
         self.canvas.itemconfig(self.canvas_image, image=self.imagePhoto)
 
-    def confirm(self):
+    def confirm(self, key_event=None):
         if re.match(r'^[^<>:;,?"*|]+\.[a-z]{3,}$', self.fName.get()):
             image_pos = self.canvas.bbox(self.canvas_image)
             zoomAmount = self.zoomAmount.get()
