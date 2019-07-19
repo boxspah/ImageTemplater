@@ -3,16 +3,22 @@ import tkinter.messagebox
 import warnings
 
 class PlatformSelect:
-    def __init__(self, pList):
+    def __init__(self, pList, file_path):
         self.window = tk.Tk()
         self.window.title('Select destination platform(s)')
         # remove maximize and minimize window buttons
         self.window.attributes('-toolwindow', 1)
         # force window to stay on top
         self.window.attributes('-topmost', 1)
-
         # handle window close event
         self.window.protocol('WM_DELETE_WINDOW', self.close)
+
+        current_file = tk.LabelFrame(text='Currently editing:', bd=3, relief=tk.GROOVE, padx=10, pady=5)
+        file_name = tk.Entry(current_file, width=40)
+        file_name.insert(0, file_path)
+        file_name.config(state='readonly')
+        file_name.pack()
+        current_file.pack(padx=10)
 
         # create dictionary to store checkbox values
         self.selectedPlatforms = {}

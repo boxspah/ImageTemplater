@@ -51,7 +51,7 @@ for infile in os.listdir('templates'):
 for im in images:
     print(f'Accessing {im}...')
     # prompt user for destination platform
-    pSelect = PlatformSelect(platform_list)
+    pSelect = PlatformSelect(platform_list, im)
 
     for platform, isSelected in pSelect.selectedPlatforms.items():
         if isSelected.get():
