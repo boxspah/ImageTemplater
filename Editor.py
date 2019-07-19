@@ -38,9 +38,17 @@ class Editor:
         self.window = tk.Tk()
         screen_dimensions = (self.window.winfo_screenwidth()*0.7, self.window.winfo_screenheight()*0.7)
         self.window.title('Position the image in the template')
-
         # handle window close event
         self.window.protocol('WM_DELETE_WINDOW', self.close)
+
+        current_file = tk.Frame(padx=10, pady=5)
+        lab_file_name = tk.Label(current_file, text='Currently editing:')
+        file_name = tk.Entry(current_file, width=50)
+        file_name.insert(0, image)
+        file_name.config(state='readonly')
+        lab_file_name.pack(side=tk.LEFT)
+        file_name.pack(side=tk.RIGHT)
+        current_file.pack(pady=5)
 
         # create canvas elements
         self.editDisplay = tk.Frame()
