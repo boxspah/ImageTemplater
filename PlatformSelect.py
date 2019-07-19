@@ -32,7 +32,9 @@ class PlatformSelect:
             l.pack(fill=tk.BOTH, expand=True)
 
         # button to proceed
-        c = tk.Button(self.window, text='Continue', command=self.confirm, padx=5, pady=5)
+        c = tk.Button(self.window, text='Continue', underline=0, command=self.confirm, padx=5, pady=5)
+        self.window.bind_all('c', self.confirm)
+        self.window.bind_all('<Return>', self.confirm)
         c.pack(fill=tk.BOTH, expand=True)
 
         # set minimum window size
@@ -45,7 +47,7 @@ class PlatformSelect:
             self.window.destroy()
             raise SystemExit('User requested termination')
 
-    def confirm(self):
+    def confirm(self, key_event=None):
         sel_array = [y.get() for x, y in self.selectedPlatforms.items()]
         # close window and continue only if at least 1 platform is selected
         if sum(sel_array) < 1:
