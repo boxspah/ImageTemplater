@@ -54,7 +54,7 @@ class Editor:
         self.canvas = tk.Canvas(editDisplay, width=self.canvasCover.width, height=self.canvasCover.height, borderwidth=0, highlightthickness=0)
         self.image = Displayable(image, screen_dimensions)
         self.imagePhoto = self.image.getPhotoImage()
-        self.canvas_image = self.canvas.create_image(self.canvasCover.width, self.canvasCover.height, anchor=tk.SE, image=self.imagePhoto, tags='draggable')
+        self.canvas_image = self.canvas.create_image(self.canvasCover.width//2, self.canvasCover.height//2, anchor=tk.CENTER, image=self.imagePhoto, tags='draggable')
         self.canvasCoverPhoto = self.canvasCover.getPhotoImage()
         self.canvas.create_image(self.canvasCover.width, self.canvasCover.height, anchor=tk.SE, image=self.canvasCoverPhoto)
         self.canvas.pack()
@@ -169,7 +169,7 @@ class Editor:
         # set filename to current timestamp
         self.fName.set('out/' + datetime.datetime.now().strftime('%Y-%m-%d %H%M%S') + '.png')
         # move image to bottom-right
-        self.canvas.coords(self.canvas_image, self.canvasCover.width, self.canvasCover.height)
+        self.canvas.coords(self.canvas_image, self.canvasCover.width//2, self.canvasCover.height//2)
         # reset zoom and update canvas image
         self.zoomAmount.set(1.0)
         self.zoomSlider.set(1.0)
