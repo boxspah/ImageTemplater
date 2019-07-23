@@ -22,14 +22,16 @@ class PlatformSelect:
 
         # create dictionary to store checkbox values
         self.selectedPlatforms = {}
-        for p in pList:
-            self.selectedPlatforms[p] = 0
 
         # create a checkbox for every platform
-        for p in self.selectedPlatforms:
+        for p in pList:
             self.selectedPlatforms[p] = tk.IntVar(value=0)
             l = tk.Checkbutton(self.window, text=p, variable=self.selectedPlatforms[p], onvalue=1, offvalue=0, height=2, padx=40)
             l.pack(fill=tk.BOTH, expand=True)
+
+        # keyboard bindings for platforms
+        for n in range(len(pList)):
+            self.window.bind_all(str(n+1), self.toggle_platform)
 
         # button to proceed
         c = tk.Button(self.window, text='Continue', underline=0, command=self.confirm, padx=5, pady=5)
@@ -46,6 +48,11 @@ class PlatformSelect:
         if tkinter.messagebox.askokcancel("Quit", "Do you really want to quit?"):
             self.window.destroy()
             raise SystemExit('User requested termination')
+
+    def toggle_platform(self, key_event):
+        affected_key = list(self.selectedPlatforms.keys())[int(key_event.keysym)-1]
+        old_value = self.selectedPlatforms[affected_key].get()
+        self.selectedPlatforms[affected_key].set(1 if old_value is 0 else 0)
 
     def confirm(self, key_event=None):
         sel_array = [y.get() for x, y in self.selectedPlatforms.items()]
